@@ -24,4 +24,7 @@ def create_app():
     from .social import social_bp
     app.register_blueprint(social_bp)
 
+    from .search import bp as search_bp
+    app.register_blueprint(search_bp)
+
     return app
