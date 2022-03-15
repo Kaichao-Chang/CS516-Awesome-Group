@@ -11,6 +11,7 @@ Make sure that the postgresql service is started.
 sudo service postgresql start
 ```
 
+
 Run install.sh. It should ask you to set the password of DB user.  
 ```sh
 bash install.sh
@@ -39,8 +40,8 @@ There should only be one user named postgres when checking with
 
 Create the user cs516 and set password.
 ```sh
-CREATE USER 'cs516';
-ALTER ROLE 'cs516' 
+CREATE USER cs516;
+ALTER ROLE cs516 
 WITH PASSWORD '[THE PASSWORD YOU SET IN STEP 3]';
 ```
 
