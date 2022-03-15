@@ -6,6 +6,7 @@ from wtforms import BooleanField, PasswordField, StringField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 
 from .models.user import User
+from .models.seller import Seller
 
 bp = Blueprint('users', __name__)
 
@@ -70,3 +71,13 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('index.index'))
+
+@bp.route('/seller_register')
+def seller_register():
+    Seller.seller_register(current_user.id)
+    return redirect(url_for('index.index'))
+
+@bp.route('/seller_post')
+def seller_post():
+    return redirect(url_for('index.index'))
+

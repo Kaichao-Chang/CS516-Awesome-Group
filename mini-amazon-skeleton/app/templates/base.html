@@ -70,6 +70,8 @@
             <button type="submit"><i class="fa fa-search"></i></button>
           </form>
         </div>
+        <a href="{{ url_for('users.seller_register') }}" type="button" class="btn btn-light">Register As A Seller</a>
+        <a href="{{ url_for('users.seller_post') }}" type="button" class="btn btn-light">Post An Item For Sale</a>
         {% else %}
           <a href="{{ url_for('users.login') }}" type="button" class="btn btn-light">Log in</a>
         {% endif %}
