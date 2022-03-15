@@ -25,3 +25,15 @@ class Product:
             "WHERE available = :available ",
             available=available)
         return [Product(*row) for row in rows]
+
+    @staticmethod
+    def post_item(name, price):
+        rows = app.db.execute("""
+            INSERT INTO Products(name, price, available)
+            VALUES(:name, :price, TRUE)
+            RETURNING id
+            """,
+            name = name,
+            price = price)
+        id = rows[0][0]
+        return None

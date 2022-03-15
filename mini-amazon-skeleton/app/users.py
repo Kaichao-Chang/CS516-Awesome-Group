@@ -1,12 +1,15 @@
+from cgi import print_exception
+from unicodedata import name
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user
 from flask_wtf import FlaskForm
 from werkzeug.urls import url_parse
-from wtforms import BooleanField, PasswordField, StringField, SubmitField
+from wtforms import BooleanField, PasswordField, StringField, SubmitField, DecimalField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 
 from .models.user import User
 from .models.seller import Seller
+from .models.product import Product
 
 bp = Blueprint('users', __name__)
 
@@ -77,7 +80,18 @@ def seller_register():
     Seller.seller_register(current_user.id)
     return redirect(url_for('index.index'))
 
-@bp.route('/seller_post')
+class SaleForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    price = DecimalField('Price', validators=[DataRequired()])
+    submit = SubmitField('Post')
+
+@bp.route('/seller_post', methods=['GET', 'POST'])
 def seller_post():
-    return redirect(url_for('index.index'))
+    form = SaleForm()
+    if form.validate_on_submit():
+        if Product.post_item(form.name.data,
+                         form.price.data):
+            return redirect(url_for('index.index'))
+    return render_template('post_item.html', title='seller_post', form=form)
+
 
