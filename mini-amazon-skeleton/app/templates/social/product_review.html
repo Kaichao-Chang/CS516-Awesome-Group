@@ -1,18 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% for review in product_reviews%}
-        {% autoescape false %}
-            <div class="row">
-                <div class="col-md-2"> 
-                    {{ review.user_name}}({{review.user_id}})
-                </div>
-                <div class="col-md-10"> 
-                    {{ review.content }}
-                </div>
-            </div>
-            <hr class="dashed">
-        {% endautoescape %}
-    {% endfor %}
+<div class="row">
+    <div class="col-md-2">
+        <h3> Customers </h3>
+    </div>
+    <div class="col-md-10">
+        <h3> Reviews </h3>
+    </div>
+</div>
+<hr class="dashed">
+{% for review in product_reviews%}
+{% autoescape false %}
+<div class="row">
+    <div class="col-md-2">
+        {{ review.user_name}}({{review.user_id}})
+    </div>
+    <div class="col-md-10">
+        {{ review.content }}
+    </div>
+</div>
+<hr class="dashed">
+{% endautoescape %}
+{% endfor %}
 {% endblock %}
-
