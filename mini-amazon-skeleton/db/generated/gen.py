@@ -3,10 +3,10 @@ import csv
 from faker import Faker
 from werkzeug.security import generate_password_hash
 
-num_users = 3
-num_products = 20
-num_purchases = 25
-max_num_reviews = 10
+num_users = 5
+num_products = 10
+num_purchases = 1000
+max_num_reviews = 1000
 
 Faker.seed(0)
 fake = Faker()
@@ -73,16 +73,15 @@ def gen_purchases(num_purchases, available_pids):
 def gen_reviews(max_num_reviews, available_uid_pid_pair):
     available_uid_pid_pair = list(set(available_uid_pid_pair))
 
-    num_reviews = min(len(available_pids), max_num_reviews)
+    num_reviews = min(len(available_uid_pid_pair), max_num_reviews)
     with open("Reviews.csv", "w") as f:
         writer = get_csv_writer(f)
         print("Reviews...", end=" ", flush=True)
-
         for id in range(num_reviews):
             if id % 100 == 0:
                 print(f"{id}", end=" ", flush=True)
             uid, pid = available_uid_pid_pair[id]
-            comment = fake.text().replace("\n", "\\n")
+            comment = fake.text().replace("\n", "<br>")
             writer.writerow([id, uid, pid, comment])
         print(f"{num_reviews} generated")
 
