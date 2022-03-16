@@ -11,6 +11,7 @@
       <th scope="col">Product ID</th>
       <th scope="col">Product Name</th>
       <th scope="col">Price</th>
+      <th scope="col">Seller</th>
       <th scope="col">Review</th>
     </tr>
   </thead>
@@ -20,7 +21,8 @@
         <th scope="row">{{product.id}}</th>
         <td>{{product.name}}</td>
         <td>{{product.price}}</td>
-        <td><a href="/social/review/{{product.id}}">review</a></td>
+        <td><a href="/social/seller_review/{{product.seller_id}}"> {{product.seller_name}} </a></td>
+        <td><a href="/social/product_review/{{product.id}}"> review </a></td>
       </tr>
     {% endfor %}
   </tbody>
