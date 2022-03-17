@@ -1,9 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<br><br>
-
 <h2>Products for sale:</h2>
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
@@ -17,13 +14,13 @@
   </thead>
   <tbody>
     {% for product in avail_products%}
-      <tr>
-        <th scope="row">{{product.id}}</th>
-        <td>{{product.name}}</td>
-        <td>{{product.price}}</td>
-        <td><a href="/social/seller_review/{{product.seller_id}}"> {{product.seller_name}} </a></td>
-        <td><a href="/social/product_review/{{product.id}}"> review </a></td>
-      </tr>
+    <tr>
+      <th scope="row">{{product.id}}</th>
+      <td>{{product.name}}</td>
+      <td>{{product.price}}</td>
+      <td><a href="/social/seller_review/{{product.seller_id}}"> {{product.seller_name}} </a></td>
+      <td><a href="/social/product_review/{{product.id}}"> review </a></td>
+    </tr>
     {% endfor %}
   </tbody>
 </table>
@@ -41,11 +38,11 @@
   </thead>
   <tbody>
     {% for purchase in purchase_history%}
-      <tr>
-        <th scope="row">{{purchase.id}}</th>
-        <td>{{purchase.name}}</td>
-        <td>{{purchase.price}}</td>
-      </tr>
+    <tr>
+      <th scope="row">{{purchase.id}}</th>
+      <td>{{purchase.name}}</td>
+      <td>{{purchase.price}}</td>
+    </tr>
     {% endfor %}
   </tbody>
 </table>

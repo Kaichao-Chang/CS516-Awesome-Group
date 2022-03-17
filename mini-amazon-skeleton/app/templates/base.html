@@ -5,40 +5,18 @@
   <title>Mini Amazon</title>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/example.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 </head>
 
 <body>
-  <div class="sidenav">
-    {% block msg %}
-      <!-- <h1 style="color:aliceblue">Welcome to CompSci 316 Mini Amazon!</h1> -->
-      <div style="color: aliceblue; text-align: right; margin-bottom: 25px">
-        {% if current_user.is_authenticated %}
-        Hello {{current_user.firstname}}! <a href="{{ url_for('users.logout') }}" type="button" class="btn btn-light">Log out</a>
-        <div class="search-bar">
-          <form action="/search" method="post">
-            <select name="type">
-              <option value ="user_history">Purchase History</option>
-              <option value ="products">Products</option>
-              <option value = "seller_history">Seller History</option>
-            </select>
-            <input type="text" placeholder="Search.." name="search-message">
-            <button type="submit"><i class="fa fa-search"></i></button>
-          </form>
-        </div>
-        <a href="{{ url_for('users.seller_register') }}" type="button" class="btn btn-light">Register As A Seller</a>
-        <a href="{{ url_for('users.seller_post') }}" type="button" class="btn btn-light">Post An Item For Sale</a>
-        {% else %}
-          <a href="{{ url_for('users.login') }}" type="button" class="btn btn-light">Log in</a>
-        {% endif %}
-      </div>
-    {% endblock %}
+  {% include '_include/header.html' %}
+
   </div>
   <div class="main">
-    {% block content %}{% endblock %}
+    {% block content %} {% endblock %}
   </div>
 </body>
 

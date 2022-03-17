@@ -1,0 +1,48 @@
+<div class="header">
+  <div class="row">
+    <div class="col-sm-4">  </div>
+    <div class="col-sm-4 text-center">
+      <img src="{{ url_for('static', filename='images/banana.jpg') }}" alt="amazon" class="logo">
+    </div>
+    {% if current_user.is_authenticated %}
+    <div class="col-sm-4">
+      <div class="float-right">
+        Hello {{current_user.firstname}}!
+        <button class="btn btn-outline-secondary dropdown-toggle btn-sm" type="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false"></button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="{{ url_for('users.logout') }}">Logout</a>
+          <a class="dropdown-item" href="{{ url_for('users.seller_register') }}">Seller Registration</a>
+          <a class="dropdown-item" href="{{ url_for('users.seller_post') }}">Post Item(s)</a>
+        </div>
+      </div>
+      {% else %}
+      <div class="col-sm-2">
+        <a href="{{ url_for('users.login') }}" type="button" class="btn btn-dark float-right">
+          login
+        </a>
+      </div>
+      {% endif %}
+
+    </div>
+
+    <form action="/search" method="post" class="search-bar input-group mb-3">
+
+      <div class="input-group-prepend">
+        <select class="custom-select" name="type">
+          <option value="user_history">Purchase History</option>
+          <option value="products">Products</option>
+          <option value="seller_history">Seller History</option>
+        </select>
+      </div>
+
+      <input type="text" class="form-control">
+
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+      </div>
+
+    </form>
+  </div>
+  <hr class="solid">
+</div>
