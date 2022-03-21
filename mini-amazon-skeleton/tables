@@ -1,0 +1,15 @@
+Users({id}, email, password, firstname, lastname)
+Products(id, name, available, seller_id)
+Purchases(id, uid, pid, time_purchased)
+ProductReviews(id, uid, pid, content)
+SellerReviews(id, customer_id, seller_id, content)
+Sellers(id, uid)
+Sales(id, uid, pid, time_purchased, sale_status)
+
+Intend to add
+Cart(customer_id, seller_id, product_id, quantity)
+ProductsDetail(product_id, description, image(as bolb?))
+
+Intend to change
+Product add category, price
+ProductReviews add rating
