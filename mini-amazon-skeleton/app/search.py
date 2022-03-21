@@ -17,18 +17,18 @@ bp = Blueprint('search', __name__)
 
 # class SearchForm(FlaskForm):
 #     type = StringField('Type', validators=[DataRequired()])
-#     search_message = StringField('Search Message', validators=[DataRequired()])
+#     search_message = StringField('search-message', validators=[DataRequired()])
 #     submit = SubmitField('Search')
 
-@bp.route("/search", methods=['GET',"POST"])
+
+@bp.route("/search", methods=['GET', "POST"])
 def search():
     # form = SearchForm()
     # type = form.type.data
     # search_message = form.search_message.data
-    
+
     # if type == 'products':
     #     print('searching for product')
-
 
     # # print(form)
     # # print('this is type')
@@ -36,14 +36,12 @@ def search():
     # print('this is search')
     # print(search_message)
     search_type = request.form.get('type')
-    search_msg = request.form.get('Search Message')
+    search_msg = request.form.get('search-message')
 
     if search_type == 'products':
-    #     print('searching for product', search_msg)
+        #     print('searching for product', search_msg)
 
         product = Search.search_product(search_msg)
-
-
 
     if current_user.is_authenticated:
         purchases = Purchase.get_all_by_uid_since(
