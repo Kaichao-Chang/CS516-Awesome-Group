@@ -1,12 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-  <title>Result</title>
-</head>
+{% block content %}
+<h2>Search result for "{{search_msg}}":</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Product ID</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Price</th>
+      <th scope="col">Seller</th>
+      <th scope="col">Review</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in match_products%}
+    <tr>
+      <th scope="row">{{product.id}}</th>
+      <td>{{product.name}}</td>
+      <td>{{product.price}}</td>
+      <td><a href="/social/seller_review/{{product.seller_id}}"> {{product.seller_name}} </a></td>
+      <td><a href="/social/product_review/{{product.id}}"> review </a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
-<body>
-    {{form.type.data}}
-</body>
+<br><br>
+{% include '_include/purchase_history.html' %}
+{% endblock %}
 
-</html>
