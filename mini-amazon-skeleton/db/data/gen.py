@@ -51,7 +51,7 @@ def gen_products(num_products, avaliable_uid):
             if available == "true":
                 available_pids.append(pid)
             seller_id = fake.random_element(elements=avaliable_uid)
-            overall_star = 1
+            overall_star = 0
 
             writer.writerow(
                 [pid, name, price, available, seller_id, overall_star])

@@ -21,3 +21,4 @@ createdb $dbname
 psql -af create.sql $dbname
 cd $datadir
 psql -af $mybase/load.sql $dbname
+psql -af $mybase/init.sql $dbname

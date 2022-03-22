@@ -28,12 +28,10 @@
           <i class="rating-star far fa-star"></i>
           <i class="rating-star far fa-star"></i>
         </a>
-        <!-- {{product.overall_star}} -->
         <script>
           var stars = document.getElementById('pr-{{ product.id }}').children;
-          {renderRating(stars, {{ product.overall_star }});}
+          renderRating(stars, {{ product.overall_star }});
         </script>
-
       </td>
     </tr>
     {% endfor %}

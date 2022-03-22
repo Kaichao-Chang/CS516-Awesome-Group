@@ -94,3 +94,11 @@ body {
     color: #dabd18b2;
     transition: filter linear .3s;
 }
+
+.review-user-box {
+    padding: 10px;
+}
+
+.review-content-box {
+    padding: 10px;
+}
