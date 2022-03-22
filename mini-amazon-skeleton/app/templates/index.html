@@ -19,7 +19,22 @@
       <td>{{product.name}}</td>
       <td>{{product.price}}</td>
       <td><a href="/social/seller_review/{{product.seller_id}}"> {{product.seller_name}} </a></td>
-      <td><a href="/social/product_review/{{product.id}}"> review </a></td>
+      <td>
+        <a class="rating" id="pr-{{ product.id }}" style="text-decoration: none"
+          href="/social/product_review/{{product.id}}">
+          <i class="rating-star far fa-star"></i>
+          <i class="rating-star far fa-star"></i>
+          <i class="rating-star far fa-star"></i>
+          <i class="rating-star far fa-star"></i>
+          <i class="rating-star far fa-star"></i>
+        </a>
+        <!-- {{product.overall_star}} -->
+        <script>
+          var stars = document.getElementById('pr-{{ product.id }}').children;
+          {renderRating(stars, {{ product.overall_star }});}
+        </script>
+
+      </td>
     </tr>
     {% endfor %}
   </tbody>
@@ -28,4 +43,3 @@
 <br><br>
 {% include '_include/purchase_history.html' %}
 {% endblock %}
-

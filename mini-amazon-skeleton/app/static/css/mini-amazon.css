@@ -30,7 +30,7 @@ body {
     background-color: #FFF;
     overflow-x: hidden;
     padding: 10px 5%
-    /* position: fixed
+        /* position: fixed
     top: 0;
     width: 100%; */
 }
@@ -60,7 +60,7 @@ body {
 
 .login-icon {
     padding: 1%;
-} 
+}
 
 .navbar-brand {
     width: 150px;
@@ -72,4 +72,25 @@ body {
     /* put value of image height as your need */
     float: center;
     margin-right: 7px;
+}
+
+.rating {
+    position: relative;
+    width: 90px;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .1em;
+    padding: 2px;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 0 2px #b3acac;
+}
+
+.rating-star {
+    font-size: 0.8em;
+    cursor: pointer;
+    color: #dabd18b2;
+    transition: filter linear .3s;
 }

@@ -14,7 +14,8 @@ CREATE TABLE Products (
     name VARCHAR(255) UNIQUE NOT NULL,
     price DECIMAL(12,2) NOT NULL,
     available BOOLEAN DEFAULT TRUE, 
-    seller_id INT NOT NULL REFERENCES Users(id)
+    seller_id INT NOT NULL REFERENCES Users(id), 
+    overall_star FLOAT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE Purchases (
@@ -29,7 +30,9 @@ CREATE TABLE ProductReviews (
     uid INT NOT NULL REFERENCES Users(id),
     pid INT NOT NULL REFERENCES Products(id),
     content TEXT NOT NULL,
-    UNIQUE (uid, pid)
+    star INT NOT NULL,
+    UNIQUE (uid, pid),
+    CHECK (star in (0, 1, 2, 3, 4, 5))
 );
 
 CREATE TABLE SellerReviews (
@@ -37,7 +40,9 @@ CREATE TABLE SellerReviews (
     customer_id INT NOT NULL REFERENCES Users(id),
     seller_id INT NOT NULL REFERENCES Users(id),
     content TEXT NOT NULL,
-    UNIQUE (customer_id, seller_id)
+    star INT NOT NULL,
+    UNIQUE (customer_id, seller_id),
+    CHECK (star in (0, 1, 2, 3, 4, 5))
 );
 
 CREATE TABLE Sellers (
@@ -52,3 +57,16 @@ CREATE TABLE Sales (
     time_purchased timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
     sale_status TEXT NOT NULL
 );
+
+
+-- Functions
+-- CREATE FUNCTION init_product_score() 
+--    RETURNS TRIGGER 
+--    LANGUAGE PLPGSQL
+-- AS $$
+-- BEGIN
+--    SELECT AVG(star) AS overall_star
+--    FROM ProductReviews
+-- END;
+-- $$
+-- Triggers
