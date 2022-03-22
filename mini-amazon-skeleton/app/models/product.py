@@ -22,7 +22,7 @@ class Product:
     @staticmethod
     def get_all(available=True):
         rows = app.db.execute(
-            "SELECT id, name, price, available, seller_id "
+            "SELECT id, name, price, available, uid "
             "FROM Products "
             "WHERE available = :available ",
             available=available)
@@ -45,10 +45,11 @@ class Product:
         return [Product(*args) for args in args_list]
 
     @staticmethod
-    def post_item(name, price):
+    def post_item(name, price, uid):
         app.db.execute(
-            "INSERT INTO Products(name, price, available) "
-            "VALUES(:name, :price, TRUE) "
+            "INSERT INTO Products(name, price, available, uid)"
+            "VALUES(:name, :price, TRUE, :uid) "
             "RETURNING id",
             name=name,
-            price=price)
+            price=price,
+            uid = uid)

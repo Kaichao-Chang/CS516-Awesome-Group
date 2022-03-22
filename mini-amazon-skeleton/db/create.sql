@@ -14,7 +14,7 @@ CREATE TABLE Products (
     name VARCHAR(255) UNIQUE NOT NULL,
     price DECIMAL(12,2) NOT NULL,
     available BOOLEAN DEFAULT TRUE, 
-    seller_id INT NOT NULL REFERENCES Users(id)
+    uid INT NOT NULL REFERENCES Users(id)
 );
 
 CREATE TABLE Purchases (
