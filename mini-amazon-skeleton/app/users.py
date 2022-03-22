@@ -90,7 +90,8 @@ def seller_post():
     form = SaleForm()
     if form.validate_on_submit():
         if Product.post_item(form.name.data,
-                         form.price.data):
+                         form.price.data,
+                         current_user.id):
             return redirect(url_for('index.index'))
     return render_template('post_item.html', title='seller_post', form=form)
 
