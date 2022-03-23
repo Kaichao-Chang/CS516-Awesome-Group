@@ -1,13 +1,29 @@
 <div class="header">
   <div class="row">
-    <div class="col-sm-4">  </div>
-    <div class="col-sm-4 text-center">
-      <!-- <img src="{{ url_for('static', filename='images/banana.jpg') }}" alt="amazon" class="logo"> -->
-      <a class="navbar-brand" href="{{ url_for('index.index') }}"><img src="{{ url_for('static', filename='images/banana.jpg') }}"></a>
+    <div class="col-sm-2 text-center">
+      <a class="navbar-brand" href="{{ url_for('index.index') }}"><img
+          src="{{ url_for('static', filename='images/banana.jpg') }}"></a>
     </div>
-    {% if current_user.is_authenticated %}
-    <div class="col-sm-4">
-      <div class="float-right">
+
+    <div class="col-sm-8 search-bar">
+      <form action="/search" method="post" class="input-group mb-3">
+        <div class="input-group-prepend">
+          <select class="custom-select" name="type">
+            <option value="products">Products</option>
+            <option value="user_history">Purchase History</option>
+            <option value="seller_history">Seller History</option>
+          </select>
+        </div>
+        <input type="text" class="form-control" name='search-message'>
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="submit">Search</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="col-sm-2 login-icon">
+      <div class="text-center">
+      {% if current_user.is_authenticated %}
         Hello {{current_user.firstname}}!
         <button class="btn btn-outline-secondary dropdown-toggle btn-sm" type="button" data-toggle="dropdown"
           aria-haspopup="true" aria-expanded="false"></button>
@@ -16,35 +32,13 @@
           <a class="dropdown-item" href="{{ url_for('users.seller_register') }}">Seller Registration</a>
           <a class="dropdown-item" href="{{ url_for('users.seller_post') }}">Post Item(s)</a>
         </div>
-      </div>
-      {% else %}
-      <div class="col-sm-4">
-        <a href="{{ url_for('users.login') }}" type="button" class="btn btn-dark float-right">
+        {% else %}
+        <a href="{{ url_for('users.login') }}" type="button" class="btn btn-dark">
           login
         </a>
+        {% endif %}
       </div>
-      {% endif %}
-
     </div>
-
-    <form action="/search" method="post" class="search-bar input-group mb-3">
-
-      <div class="input-group-prepend">
-        <select class="custom-select" name="type">
-          <option value="products">Products</option>
-          <option value="user_history">Purchase History</option>
-          <option value="seller_history">Seller History</option>
-        </select>
-      </div>
-
-      <!-- <input type="text" class="form-control"> -->
-      <input type="text" class="form-control" name='search-message'><br>
-
-      <div class="input-group-append">
-        <button class="btn btn-outline-secondary" type="submit">Search</button>
-      </div>
-
-    </form>
   </div>
   <hr class="solid">
 </div>

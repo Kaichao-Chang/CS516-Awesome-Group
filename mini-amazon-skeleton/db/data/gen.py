@@ -51,8 +51,10 @@ def gen_products(num_products, avaliable_uid):
             if available == "true":
                 available_pids.append(pid)
             seller_id = fake.random_element(elements=avaliable_uid)
+            overall_star = 0
 
-            writer.writerow([pid, name, price, available, seller_id])
+            writer.writerow(
+                [pid, name, price, available, seller_id, overall_star])
         print(f"{num_products} generated; {len(available_pids)} available")
 
     return available_pids
@@ -88,7 +90,8 @@ def gen_product_reviews(max_num_product_reviews, available_uid_pid_pairs):
                 print(f"{id}", end=" ", flush=True)
             uid, pid = available_uid_pid_pairs[id]
             comment = fake.text().replace("\n", "<br>")
-            writer.writerow([id, uid, pid, comment])
+            star = fake.random_int(1, 5)
+            writer.writerow([id, uid, pid, comment, star])
         print(f"{num_product_reviews} generated")
 
 
@@ -106,7 +109,8 @@ def gen_seller_reviews(max_num_seller_reviews, available_uids):
                 print(f"{id}", end=" ", flush=True)
             customer_id, seller_id = available_uid_uid_pairs[id]
             comment = fake.text().replace("\n", "<br>")
-            writer.writerow([id, customer_id, seller_id, comment])
+            star = fake.random_int(1, 5)
+            writer.writerow([id, customer_id, seller_id, comment, star])
         print(f"{num_seller_reviews} generated")
 
 

@@ -2,18 +2,26 @@ from flask import current_app as app
 
 
 class Product:
-    def __init__(self, id, name, price, available, seller_id, seller_name):
+    def __init__(self,
+                 id,
+                 name,
+                 price,
+                 available,
+                 seller_id,
+                 overall_star: float,
+                 seller_name: str):
         self.id = id
         self.name = name
         self.price = price
         self.available = available
         self.seller_id = seller_id
         self.seller_name = seller_name
+        self.overall_star = round(overall_star)
 
     @staticmethod
     def get(id):
         rows = app.db.execute(
-            "SELECT id, name, price, available, seller_id "
+            "SELECT id, name, price, available, seller_id, overall_star "
             "FROM Products "
             "WHERE id = :id",
             id=id)
@@ -22,12 +30,12 @@ class Product:
     @staticmethod
     def get_all(available=True):
         rows = app.db.execute(
-            "SELECT id, name, price, available, uid "
+            "SELECT id, name, price, available, seller_id, overall_star "
             "FROM Products "
             "WHERE available = :available ",
             available=available)
 
-        seller_ids = tuple([row[-1] for row in rows])
+        seller_ids = tuple([row[-2] for row in rows])
         seller_names = app.db.execute(
             "SELECT firstname, lastname "
             "FROM Users "
@@ -52,4 +60,4 @@ class Product:
             "RETURNING id",
             name=name,
             price=price,
-            uid = uid)
+            uid=uid)
