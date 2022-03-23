@@ -7,14 +7,29 @@
 
     <div class="col-sm-8 search-bar">
       <form action="/search" method="post" class="input-group mb-3">
-        <div class="input-group-prepend">
+        <!-- <div class="input-group-prepend">
           <select class="custom-select" name="type">
             <option value="products">Products</option>
             <option value="user_history">Purchase History</option>
             <option value="seller_history">Seller History</option>
           </select>
+        </div> -->
+        <div class="input-group-prepend">
+          <select class="custom-select" name="category">
+            <option value="">All</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+          </select>
         </div>
-        <input type="text" class="form-control" name='search-message'>
+        <input type="text" class="form-control" name='search-message' placeholder={{keyword}}>
+        <div class="input-group-prepend">
+          <select class="custom-select" name="order">
+            <option value=0>Select Order</option>
+            <option value=1>$-$$$</option>
+            <option value=2>$$$-$</option>
+          </select>
+        </div>
         <div class="input-group-append">
           <button class="btn btn-outline-secondary" type="submit">Search</button>
         </div>

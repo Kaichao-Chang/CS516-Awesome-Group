@@ -14,7 +14,8 @@ CREATE TABLE Products (
     price DECIMAL(12, 2) NOT NULL,
     available BOOLEAN DEFAULT TRUE,
     seller_id INT NOT NULL REFERENCES Users(id),
-    overall_star FLOAT NOT NULL DEFAULT 0
+    overall_star FLOAT NOT NULL DEFAULT 0,
+    cate VARCHAR(1)
 );
 
 CREATE TABLE Purchases (
