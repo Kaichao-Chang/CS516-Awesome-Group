@@ -18,15 +18,15 @@ FROM Products """
                 if search_msg and cate:
                         sql += \
                         """
-WHERE name LIKE '%{}%'
+WHERE (name LIKE '%{}%' or descr LIKE '%{}%')
 AND cate = '{}'
-                        """.format(search_msg, cate)
+                        """.format(search_msg, search_msg, cate)
                 
                 elif search_msg:
                         sql += \
                         """
-WHERE name LIKE '%{}%'
-                        """.format(search_msg)
+WHERE name LIKE '%{}%' or descr LIKE '%{}%'
+                        """.format(search_msg, search_msg)
                 elif search_msg and cate:
                         sql += \
                         """

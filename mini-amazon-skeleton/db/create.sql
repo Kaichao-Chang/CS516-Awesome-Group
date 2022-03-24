@@ -15,7 +15,8 @@ CREATE TABLE Products (
     available BOOLEAN DEFAULT TRUE,
     seller_id INT NOT NULL REFERENCES Users(id),
     overall_star FLOAT NOT NULL DEFAULT 0,
-    cate VARCHAR(1)
+    cate VARCHAR(1),
+    descr VARCHAR(255)
 );
 
 CREATE TABLE Purchases (
