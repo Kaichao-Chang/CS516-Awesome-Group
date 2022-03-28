@@ -1,0 +1,30 @@
+<form method="post">
+  <div class="form-group shadow-textarea">
+    <textarea
+      class="form-control z-depth-1"
+      name="review-content"
+      rows="3"
+      placeholder="Review..."
+    ></textarea>
+  </div>
+
+  <div class="row">
+    <div class="col-10">
+      <select class="custom-select w-25" name="star">
+        <option value="5" selected>5-Star</option>
+        <option value="4">4-Star</option>
+        <option value="3">3-Star</option>
+        <option value="2">2-Star</option>
+        <option value="1">1-Star</option>
+      </select>
+    </div>
+
+    <div class="col-2">
+      <div class="float-right">
+        <button type="submit" class="btn btn-primary btn-dark mb-4">
+          Post
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

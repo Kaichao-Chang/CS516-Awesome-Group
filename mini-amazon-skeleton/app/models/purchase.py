@@ -14,7 +14,7 @@ class Purchase:
     @staticmethod
     def get(id):
         rows = app.db.execute('''
-SELECT pur.id, pur.uid, pid, name, price, time_purchased, pro.uid AS seller_uid
+SELECT pur.id, pur.uid, pid, name, price, time_purchased, pro.seller_id AS seller_uid
 FROM Purchases pur
 INNER JOIN Products pro
     ON pur.pid = pro.id
@@ -26,7 +26,7 @@ WHERE id = :id
     @staticmethod
     def get_all_by_uid_since(uid, since):
         rows = app.db.execute('''
-SELECT pur.id, pur.uid, pid, name, price, time_purchased, pro.uid AS seller_uid
+SELECT pur.id, pur.uid, pid, name, price, time_purchased, pro.seller_id AS seller_uid
 FROM Purchases pur
 INNER JOIN Products pro
     ON pur.pid = pro.id
