@@ -58,3 +58,8 @@ CREATE TABLE Sales (
     time_purchased timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
     sale_status TEXT NOT NULL
 );
+
+CREATE TABLE Inventory (
+    pid INT NOT NULL REFERENCES Products(id),
+    inv INT NOT NULL 
+);
