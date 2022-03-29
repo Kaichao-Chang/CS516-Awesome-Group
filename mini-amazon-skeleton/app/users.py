@@ -75,10 +75,27 @@ def logout():
     logout_user()
     return redirect(url_for('index.index'))
 
-@bp.route('/seller_register')
+class SellerRegistrationForm(FlaskForm):
+    seller_register =  StringField('Are you willing to become a seller in our website and compile with our policies? (input "y" in the block below to sign up)', 
+        validators=[DataRequired()])
+    submit = SubmitField('Register')
+    #submit = 
+
+    def validate_input(self, seller_register):
+        if seller_register.data != "y": 
+            raise ValidationError('Invalid Input. To register, input "y" blow!')
+
+@bp.route('/seller_register', methods=['GET', 'POST'])
 def seller_register():
-    Seller.seller_register(current_user.id)
-    return redirect(url_for('index.index'))
+    form = SellerRegistrationForm()
+    if form.validate_on_submit():
+        if form.seller_register.data == "y":
+            Seller.seller_register(current_user.id)
+            return redirect(url_for('index.index'))
+        else:
+            flash('Invalid Input. To register, input "y" blow!')
+            return redirect(url_for('users.seller_register'))
+    return render_template('seller_register.html', title='Seller_Register', form=form)
 
 class SaleForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
@@ -93,6 +110,4 @@ def seller_post():
                          form.price.data,
                          current_user.id):
             return redirect(url_for('index.index'))
-    return render_template('post_item.html', title='seller_post', form=form)
-
-
+    return render_template('post_item.html', title='Seller_Post', form=form)
