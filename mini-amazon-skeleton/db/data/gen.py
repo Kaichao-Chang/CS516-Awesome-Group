@@ -52,9 +52,10 @@ def gen_products(num_products, avaliable_uid):
                 available_pids.append(pid)
             seller_id = fake.random_element(elements=avaliable_uid)
             overall_star = 0
+            inv = fake.random_int(1, 20)
 
             writer.writerow(
-                [pid, name, price, available, seller_id, overall_star])
+                [pid, name, price, available, seller_id, overall_star, inv])
         print(f"{num_products} generated; {len(available_pids)} available")
 
     return available_pids

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Selling History</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Product Name</th>
+      <th scope="col">Price</th>
+      <th scope="col">Overall Star</th>
+      <th scope="col">Inventory</th>
+      <th scope="col">Fulfillment Status</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <th scope="row">{{sell_history.name}}</th>
+      <td>{{sell_history.price}}</td>
+      <td>{{sell_history.overall_star}}</td>
+      <td>{{sell_history.inv}}</td>
+    </tr>
+  </tbody>
+</table>
+<br><br>
+{% endblock %}

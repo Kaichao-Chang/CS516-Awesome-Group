@@ -4,6 +4,7 @@ import datetime
 
 from .models.product import Product
 from .models.purchase import Purchase
+from .models.seller import Seller
 
 from flask import Blueprint
 bp = Blueprint('index', __name__)
@@ -17,6 +18,8 @@ def index():
     if current_user.is_authenticated:
         purchases = Purchase.get_all_by_uid_since(
             current_user.id, datetime.datetime(1980, 9, 14, 0, 0, 0))
+        if Seller.is_seller(current_user.id):
+            current_user.is_seller = True
     else:
         purchases = None
     # render the page by adding information to the index.html file

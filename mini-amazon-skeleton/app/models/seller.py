@@ -34,3 +34,4 @@ class Seller(UserMixin):
             print(str(e))
             return None
             
+            

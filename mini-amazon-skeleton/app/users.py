@@ -1,10 +1,11 @@
 from cgi import print_exception
+from operator import is_
 from unicodedata import name
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user
 from flask_wtf import FlaskForm
 from werkzeug.urls import url_parse
-from wtforms import BooleanField, PasswordField, StringField, SubmitField, DecimalField
+from wtforms import BooleanField, PasswordField, StringField, SubmitField, DecimalField, IntegerField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 
 from .models.user import User
@@ -88,6 +89,7 @@ class SellerRegistrationForm(FlaskForm):
 @bp.route('/seller_register', methods=['GET', 'POST'])
 def seller_register():
     form = SellerRegistrationForm()
+    is_seller = Seller.is_seller(current_user.id)
     if form.validate_on_submit():
         if form.seller_register.data == "y":
             Seller.seller_register(current_user.id)
@@ -95,19 +97,32 @@ def seller_register():
         else:
             flash('Invalid Input. To register, input "y" blow!')
             return redirect(url_for('users.seller_register'))
-    return render_template('seller_register.html', title='Seller_Register', form=form)
+    return render_template('seller_register.html', 
+        title='Seller_Register', form=form, is_seller = is_seller)
 
 class SaleForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired()])
-    price = DecimalField('Price', validators=[DataRequired()])
+    name = StringField('Product Name', validators=[DataRequired()])
+    price = DecimalField('Product Price', validators=[DataRequired()])
+    number = IntegerField('Number of Items', validators=[DataRequired()])
     submit = SubmitField('Post')
 
 @bp.route('/seller_post', methods=['GET', 'POST'])
 def seller_post():
     form = SaleForm()
+    is_seller = Seller.is_seller(current_user.id)
     if form.validate_on_submit():
-        if Product.post_item(form.name.data,
+        Product.post_item(form.name.data,
                          form.price.data,
-                         current_user.id):
-            return redirect(url_for('index.index'))
-    return render_template('post_item.html', title='Seller_Post', form=form)
+                         current_user.id,
+                         form.number.data)
+        return redirect(url_for('index.index'))        
+    return render_template('post_item.html', title='Seller_Post', form=form, is_seller = is_seller)
+
+@bp.route('/selling_history')
+def selling_history():
+    if current_user.is_authenticated:
+        sell_history = Product.get_all_by_seller(current_user.id)
+    else:
+        sell_history = None
+    # render the page by adding information to the index.html file
+    return render_template('selling_history.html', sell_history = sell_history)

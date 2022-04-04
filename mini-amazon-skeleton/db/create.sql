@@ -16,7 +16,8 @@ CREATE TABLE Products (
     seller_id INT NOT NULL REFERENCES Users(id),
     overall_star FLOAT NOT NULL DEFAULT 0,
     cate VARCHAR(1),
-    descr VARCHAR(255)
+    descr VARCHAR(255),
+    inv INT NOT NULL
 );
 
 CREATE TABLE Purchases (
@@ -59,7 +60,3 @@ CREATE TABLE Sales (
     sale_status TEXT NOT NULL
 );
 
-CREATE TABLE Inventory (
-    pid INT NOT NULL REFERENCES Products(id),
-    inv INT NOT NULL 
-);
