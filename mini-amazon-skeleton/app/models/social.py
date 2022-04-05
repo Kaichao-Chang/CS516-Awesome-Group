@@ -25,6 +25,7 @@ class ProductReview:
                       product_id: int,
                       content: str,
                       star: int):
+        # Insert
         app.db.execute(
             "INSERT INTO ProductReviews (uid, pid, content, star) "
             "VALUES(:uid, :pid, :content, :star) ",
@@ -32,6 +33,21 @@ class ProductReview:
             pid=product_id,
             content=content,
             star=star
+        )
+        ProductReview.update_product_score(product_id)
+
+    @staticmethod
+    def update_product_score(product_id: int):
+        # Update average score
+        app.db.execute(
+            "WITH TempTable(avg_star) AS "
+            "(SELECT AVG(star) from ProductReviews "
+            "WHERE pid = :pid) "
+            "   UPDATE Products "
+            "   SET overall_star = TempTable.avg_star "
+            "   FROM TempTable "
+            "   WHERE id = :pid;",
+            pid=product_id
         )
 
 
