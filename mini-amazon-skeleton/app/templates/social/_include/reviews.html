@@ -1,7 +1,10 @@
 {% autoescape false %}
 <div class="row">
     <div class="col-sm-2 review-user-box">
-        {{ review.user_name}}({{review.user_id}})
+        <b>{{ review.user_name}}({{review.user_id}})</b>
+        
+        <br/>
+        {{ review.created_at }}
         <a class="rating" id="ur-{{ review.user_id }}">
             <i class="rating-star far fa-star"></i>
             <i class="rating-star far fa-star"></i>
