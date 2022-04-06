@@ -38,12 +38,15 @@ class Product:
             available=available)
         seller_ids = tuple([row[-3] for row in rows])
 
-        seller_names = app.db.execute(
-            "SELECT firstname, lastname "
-            "FROM Users "
-            "WHERE id IN :seller_ids",
-            seller_ids=seller_ids
-        )
+        seller_names = []
+        for seller_id in seller_ids:
+            row = app.db.execute(
+                "SELECT firstname, lastname "
+                "FROM Users "
+                "WHERE id = :seller_id",
+                seller_id=seller_id
+            )
+            seller_names.append(row[0])
 
         args_list = []
         for row, seller_name in zip(rows, seller_names):
