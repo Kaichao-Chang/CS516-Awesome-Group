@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 {% for review in seller_reviews%}
 {% include 'social/_include/reviews.html' %}
 {% endfor %}
@@ -8,4 +9,5 @@
 {% if current_user.is_authenticated %}
 {% include 'social/_include/review_form.html' %}
 {% endif %}
+
 {% endblock %}

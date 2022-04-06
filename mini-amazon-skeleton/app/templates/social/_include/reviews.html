@@ -16,6 +16,16 @@
     </div>
     <div class="col-sm-10 review-content-box">
         {{ review.content }}
+        {% if current_user.id == review.user_id %}
+        <div class="row">
+            <div class="col-12">
+                <button class="btn btn-danger float-right">delete</button>
+                <button id="edit-button" onclick="click_edit_review()" class="btn btn-dark float-right">edit</button>
+            </div>
+        </div>
+
+        <script  type="module"> hid_component("review-editor") </script>
+        {% endif %}
     </div>
 </div>
 <hr class="dashed">

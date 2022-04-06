@@ -37,6 +37,22 @@ class ProductReview:
         ProductReview.update_product_score(product_id)
 
     @staticmethod
+    def update_review(user_id: int,
+                      product_id: int,
+                      content: str,
+                      star: int):
+        app.db.execute(
+            "UPDATE ProductReviews "
+            "SET content = :content, star = :star "
+            "WHERE uid = :uid AND pid = :pid ",
+            uid=user_id,
+            pid=product_id,
+            content=content,
+            star=star
+        )
+        ProductReview.update_product_score(product_id)
+
+    @staticmethod
     def update_product_score(product_id: int):
         # Update average score
         app.db.execute(
@@ -80,4 +96,35 @@ class SellerReview:
             sid=seller_id,
             content=content,
             star=star
+        )
+        SellerReview.update_seller_score(seller_id)
+
+    @staticmethod
+    def update_review(user_id: int,
+                      seller_id: int,
+                      content: str,
+                      star: int):
+        app.db.execute(
+            "UPDATE SellerReviews "
+            "SET content = :content, star = :star "
+            "WHERE customer_id = :uid AND seller_id = :sid ",
+            uid=user_id,
+            sid=seller_id,
+            content=content,
+            star=star
+        )
+        SellerReview.update_seller_score(seller_id)
+
+    @staticmethod
+    def update_seller_score(seller_id: int):
+        # Update average score
+        app.db.execute(
+            "WITH TempTable(avg_star) AS "
+            "(SELECT AVG(star) from SellerReviews "
+            "WHERE seller_id = :sid) "
+            "   UPDATE Sellers "
+            "   SET overall_star = TempTable.avg_star "
+            "   FROM TempTable "
+            "   WHERE id = :sid;",
+            sid=seller_id
         )
