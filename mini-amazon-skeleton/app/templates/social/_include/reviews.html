@@ -19,7 +19,10 @@
         {% if current_user.id == review.user_id %}
         <div class="row">
             <div class="col-12">
-                <button class="btn btn-danger float-right">delete</button>
+                <form method="post" id="delete-form">
+                    <input type="hidden" name="review-type" value="delete">
+                    <button type="submit" class="btn btn-danger float-right">delete</button>
+                </form>
                 <button id="edit-button" onclick="click_edit_review()" class="btn btn-dark float-right">edit</button>
             </div>
         </div>

@@ -20,6 +20,9 @@ def product_reviews(product_id: int):
             review_content = request.form.get('review-content')
             star = int(request.form.get('star'))
             ProductReview.update_review(user_id, product_id, review_content, star)
+        elif review_type == "delete":
+            user_id = current_user.id
+            ProductReview.delete_review(user_id, product_id)
     reviews = ProductReview.get_reviews_of_one_product(product_id)
     return render_template("social/product_review.html", product_reviews=reviews)
 
@@ -38,6 +41,9 @@ def seller_reviews(seller_id: int):
             review_content = request.form.get('review-content')
             star = int(request.form.get('star'))
             SellerReview.update_review(user_id, seller_id, review_content, star)
+        elif review_type == "delete":
+            user_id = current_user.id
+            SellerReview.delete_review(user_id, seller_id)
 
     reviews = SellerReview.get_reviews_of_one_seller(seller_id)
     return render_template("social/seller_review.html", seller_reviews=reviews)

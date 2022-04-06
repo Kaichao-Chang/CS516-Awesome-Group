@@ -53,6 +53,17 @@ class ProductReview:
         ProductReview.update_product_score(product_id)
 
     @staticmethod
+    def delete_review(user_id: int,
+                      product_id: int):
+        app.db.execute(
+            "DELETE FROM ProductReviews "
+            "WHERE uid = :uid AND pid = :pid ",
+            uid=user_id,
+            pid=product_id
+        )
+        ProductReview.update_product_score(product_id)
+
+    @staticmethod
     def update_product_score(product_id: int):
         # Update average score
         app.db.execute(
@@ -112,6 +123,17 @@ class SellerReview:
             sid=seller_id,
             content=content,
             star=star
+        )
+        SellerReview.update_seller_score(seller_id)
+
+    @staticmethod
+    def delete_review(user_id: int,
+                      seller_id: int):
+        app.db.execute(
+            "DELETE FROM SellerReviews "
+            "WHERE customer_id = :uid AND seller_id = :sid ",
+            uid=user_id,
+            sid=seller_id
         )
         SellerReview.update_seller_score(seller_id)
 
