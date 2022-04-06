@@ -28,5 +28,6 @@ function change_value(component_id, value) {
 function click_edit_review() {
     show_component('review-editor'); 
     hid_component('edit-button');
-    change_value('review-type', "update")
+    change_value('review-type', 'update')
+    window.location.hash = 'review-editor';
 }
