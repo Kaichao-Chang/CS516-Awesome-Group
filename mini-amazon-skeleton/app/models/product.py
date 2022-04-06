@@ -9,7 +9,7 @@ class Product:
                  available,
                  seller_id,
                  overall_star: float,
-                 seller_name: str, 
+                 seller_name: str,
                  inv):
         self.id = id
         self.name = name
@@ -36,9 +36,8 @@ class Product:
             "FROM Products "
             "WHERE available = :available ",
             available=available)
-        print(rows)
         seller_ids = tuple([row[-3] for row in rows])
-        
+
         seller_names = app.db.execute(
             "SELECT firstname, lastname "
             "FROM Users "
@@ -50,7 +49,7 @@ class Product:
         for row, seller_name in zip(rows, seller_names):
             row = list(row)
             seller_name = list(seller_name)
-            row.append(" ".join(seller_name))
+            row.insert(-1, " ".join(seller_name))
             args_list.append(row)
 
         return [Product(*args) for args in args_list]
@@ -64,18 +63,18 @@ class Product:
             name=name,
             price=price,
             uid=uid,
-            number = number)
-    
+            number=number)
+
     @staticmethod
     def get_all_by_seller(uid):
         sells = app.db.execute(
             "SELECT id, name, price, available, seller_id, overall_star, ingv "
             "FROM Products "
             "WHERE seller_id = :uid",
-            uid = uid)
-        
+            uid=uid)
+
         seller_ids = tuple([sell[-3] for sell in sells])
-        
+
         seller_names = app.db.execute(
             "SELECT firstname, lastname "
             "FROM Users "

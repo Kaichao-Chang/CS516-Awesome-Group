@@ -1,5 +1,5 @@
--- Initialize the average ratings of all the reviews
-WITH ReviewSum AS (
+-- Initialize the average ratings of all the produce reviews
+WITH ProductReviewSum AS (
     SELECT
         pid,
         AVG(star) as avg_star
@@ -9,11 +9,29 @@ WITH ReviewSum AS (
         pid
 )
 UPDATE
-    Products UpP
+    Products
 SET
-    overall_star = RS.avg_star
+    overall_star = PRS.avg_star
 FROM
-    Products P
-    JOIN ReviewSum RS ON P.id = RS.pid
+    Products P, ProductReviewSum PRS
 WHERE 
-    UpP.id = RS.pid;
+    Products.id = PRS.pid;
+
+-- Initialize the average ratings of all the seller reviews
+WITH SellerReviewSum AS (
+    SELECT
+        seller_id,
+        AVG(star) as avg_star
+    FROM
+        SellerReviews
+    GROUP BY
+        seller_id
+)
+UPDATE
+    Sellers
+SET
+    overall_star = SRS.avg_star
+FROM
+    SellerReviewSum SRS
+WHERE 
+    Sellers.id = SRS.seller_id;
