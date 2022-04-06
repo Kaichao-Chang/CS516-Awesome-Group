@@ -34,7 +34,8 @@ CREATE TABLE ProductReviews (
     content TEXT NOT NULL,
     star INT NOT NULL,
     UNIQUE (uid, pid),
-    CHECK (star in (0, 1, 2, 3, 4, 5))
+    CHECK (star in (0, 1, 2, 3, 4, 5)),
+    created_at TIMESTAMPTZ DEFAULT Now()
 );
 
 CREATE TABLE SellerReviews (
@@ -44,7 +45,8 @@ CREATE TABLE SellerReviews (
     content TEXT NOT NULL,
     star INT NOT NULL,
     UNIQUE (customer_id, seller_id),
-    CHECK (star in (0, 1, 2, 3, 4, 5))
+    CHECK (star in (0, 1, 2, 3, 4, 5)),
+    created_at TIMESTAMPTZ DEFAULT Now()
 );
 
 CREATE TABLE Sellers (
