@@ -20,14 +20,14 @@ function show_component(component_id) {
     }
 }
 
-function change_value(component_id, value) {
-    var x = document.getElementById(component_id);
+function change_value(selector, value) {
+    var x = document.querySelector(selector);
     x.value = value;
 }
 
 function click_edit_review() {
     show_component('review-editor'); 
     hid_component('edit-button');
-    change_value('review-type', 'update')
+    change_value('#review-editor #review-type', 'update')
     window.location.hash = 'review-editor';
 }

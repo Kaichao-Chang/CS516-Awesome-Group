@@ -36,7 +36,7 @@ class Product:
             "ORDER BY Products.id DESC", available=available)
 
         seller_review_info = app.db.execute(
-            "SELECT COUNT(SellerReviews.id), overall_star "
+            "SELECT COUNT(SellerReviews.id), AVG(SellerReviews.star) "
             "FROM Products "
             "LEFT JOIN SellerReviews ON SellerReviews.seller_id = Products.seller_id "
             "WHERE available = :available "
@@ -50,6 +50,8 @@ class Product:
             "WHERE available = :available "
             "GROUP BY Products.id "
             "ORDER BY Products.id DESC", available=available)
+        # import ipdb
+        # ipdb.set_trace()
 
         return [Product(*product_info[i], *seller_review_info[i], *product_review_info[i]) for i in range(len(product_info))]
 

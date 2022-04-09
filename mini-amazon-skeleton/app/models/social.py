@@ -193,6 +193,20 @@ class SellerReview:
         SellerReview.update_seller_score(seller_id)
 
     @staticmethod
+    def update_seller_score(seller_id: int):
+        # Update average score
+        app.db.execute(
+            "WITH TempTable(avg_star) AS "
+            "(SELECT AVG(star) from SellerReviews "
+            "WHERE seller_id = :sid) "
+            "   UPDATE Sellers "
+            "   SET overall_star = TempTable.avg_star "
+            "   FROM TempTable "
+            "   WHERE id = :sid ",
+            sid=seller_id
+        )
+
+    @staticmethod
     def delete_review(user_id: int,
                       seller_id: int):
         app.db.execute(
