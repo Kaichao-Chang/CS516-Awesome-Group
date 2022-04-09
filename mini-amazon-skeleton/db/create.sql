@@ -33,9 +33,10 @@ CREATE TABLE ProductReviews (
     pid INT NOT NULL REFERENCES Products(id),
     content TEXT NOT NULL,
     star INT NOT NULL,
+    upvote INT NOT NULL DEFAULT 0, 
+    created_at TIMESTAMPTZ DEFAULT Now(),
     UNIQUE (uid, pid),
-    CHECK (star in (0, 1, 2, 3, 4, 5)),
-    created_at TIMESTAMPTZ DEFAULT Now()
+    CHECK (star in (0, 1, 2, 3, 4, 5))
 );
 
 CREATE TABLE SellerReviews (
@@ -44,9 +45,10 @@ CREATE TABLE SellerReviews (
     seller_id INT NOT NULL REFERENCES Users(id),
     content TEXT NOT NULL,
     star INT NOT NULL,
+    upvote INT NOT NULL DEFAULT 0, 
+    created_at TIMESTAMPTZ DEFAULT Now(),
     UNIQUE (customer_id, seller_id),
-    CHECK (star in (0, 1, 2, 3, 4, 5)),
-    created_at TIMESTAMPTZ DEFAULT Now()
+    CHECK (star in (0, 1, 2, 3, 4, 5))
 );
 
 CREATE TABLE Sellers (
