@@ -9,7 +9,8 @@
       <th scope="col">Product Name</th>
       <th scope="col">Price</th>
       <th scope="col">Seller</th>
-      <th scope="col">Review</th>
+      <th scope="col">Seller Review</th>
+      <th scope="col">Product Review</th>
     </tr>
   </thead>
   <tbody>
@@ -18,20 +19,14 @@
       <th scope="row">{{product.id}}</th>
       <td>{{product.name}}</td>
       <td>{{product.price}}</td>
-      <td><a href="/social/seller_review/{{product.seller_id}}"> {{product.seller_name}} </a></td>
+      <td>{{product.seller_name}} </td>
+      <td><a href="{{ url_for('social.seller_reviews', seller_id=product.seller_id) }}"> {{ product.n_seller_reviews }} Reviews </a> 
+        / {{ product.seller_overall_star }} Stars</td>
       <td>
-        <a class="rating" id="pr-{{ product.id }}" style="text-decoration: none"
-          href="/social/product_review/{{product.id}}">
-          <i class="rating-star far fa-star"></i>
-          <i class="rating-star far fa-star"></i>
-          <i class="rating-star far fa-star"></i>
-          <i class="rating-star far fa-star"></i>
-          <i class="rating-star far fa-star"></i>
+        <a href="{{ url_for('social.product_reviews', product_id=product.id) }}">
+          {{ product.n_product_reviews }} Reviews
         </a>
-        <script>
-          var stars = document.getElementById('pr-{{ product.id }}').children;
-          renderRating(stars, {{ product.overall_star }});
-        </script>
+        / {{ product.product_overall_star }} Stars
       </td>
     </tr>
     {% endfor %}

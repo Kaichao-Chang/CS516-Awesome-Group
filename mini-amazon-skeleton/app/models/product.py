@@ -8,54 +8,50 @@ class Product:
                  price,
                  available,
                  seller_id,
-                 overall_star: float,
                  seller_name: str,
-                 inv):
+                 product_overall_star: float,
+                 inv: int,
+                 n_seller_reviews: int,
+                 seller_overall_star: float,
+                 n_product_reviews: int):
         self.id = id
         self.name = name
         self.price = price
         self.available = available
         self.seller_id = seller_id
         self.seller_name = seller_name
-        self.overall_star = round(overall_star)
-        inv = inv
-
-    @staticmethod
-    def get(id):
-        rows = app.db.execute(
-            "SELECT id, name, price, available, seller_id, overall_star "
-            "FROM Products "
-            "WHERE id = :id",
-            id=id)
-        return Product(*(rows[0])) if rows is not None else None
+        self.product_overall_star = round(product_overall_star, 1)
+        self.inv = inv
+        self.n_seller_reviews = n_seller_reviews
+        self.seller_overall_star = round(seller_overall_star, 1)
+        self.n_product_reviews = n_product_reviews
 
     @staticmethod
     def get_all(available=True):
-        rows = app.db.execute(
-            "SELECT id, name, price, available, seller_id, overall_star, inv "
+        product_info = app.db.execute(
+            "SELECT Products.id, name, price, available, seller_id, CONCAT(Users.firstname, ' ', Users.lastname) AS seller_name, overall_star, inv "
             "FROM Products "
-            "WHERE available = :available ",
-            available=available)
-        seller_ids = tuple([row[-3] for row in rows])
+            "LEFT JOIN Users ON Products.seller_id = Users.id "
+            "WHERE available = :available "
+            "ORDER BY Products.id DESC", available=available)
 
-        seller_names = []
-        for seller_id in seller_ids:
-            row = app.db.execute(
-                "SELECT firstname, lastname "
-                "FROM Users "
-                "WHERE id = :seller_id",
-                seller_id=seller_id
-            )
-            seller_names.append(row[0])
+        seller_review_info = app.db.execute(
+            "SELECT COUNT(SellerReviews.id), overall_star "
+            "FROM Products "
+            "LEFT JOIN SellerReviews ON SellerReviews.seller_id = Products.seller_id "
+            "WHERE available = :available "
+            "GROUP BY Products.id "
+            "ORDER BY Products.id DESC", available=available)
 
-        args_list = []
-        for row, seller_name in zip(rows, seller_names):
-            row = list(row)
-            seller_name = list(seller_name)
-            row.insert(-1, " ".join(seller_name))
-            args_list.append(row)
+        product_review_info = app.db.execute(
+            "SELECT COUNT(ProductReviews.id)"
+            "FROM Products "
+            "LEFT JOIN ProductReviews ON ProductReviews.pid = Products.id "
+            "WHERE available = :available "
+            "GROUP BY Products.id "
+            "ORDER BY Products.id DESC", available=available)
 
-        return [Product(*args) for args in args_list]
+        return [Product(*product_info[i], *seller_review_info[i], *product_review_info[i]) for i in range(len(product_info))]
 
     @staticmethod
     def post_item(name, price, uid, number):
