@@ -82,7 +82,7 @@ body {
     justify-content: center;
     align-items: center;
     gap: .1em;
-    padding: 2px;
+    padding: 10px;
     overflow: hidden;
     border-radius: 10px;
     box-shadow: 0 0 2px #b3acac;
@@ -101,4 +101,8 @@ body {
 
 .review-content-box {
     padding: 10px;
+}
+
+.upvote {
+    padding: 10px 10px 0px 0px;
 }

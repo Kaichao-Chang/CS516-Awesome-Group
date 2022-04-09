@@ -23,6 +23,10 @@ def product_reviews(product_id: int):
         elif review_type == "delete":
             user_id = current_user.id
             ProductReview.delete_review(user_id, product_id)
+        elif review_type == "upvote":
+            user_id = current_user.id
+            review_id = int(request.form.get('review-id'))
+            ProductReview.upvote_review(review_id)
     reviews = ProductReview.get_reviews_of_one_product(product_id)
     return render_template("social/review.html", reviews=reviews, review_type="product_review")
 
@@ -44,6 +48,10 @@ def seller_reviews(seller_id: int):
         elif review_type == "delete":
             user_id = current_user.id
             SellerReview.delete_review(user_id, seller_id)
+        elif review_type == "upvote":
+            user_id = current_user.id
+            review_id = int(request.form.get('review-id'))
+            SellerReview.upvote_review(review_id)
 
     reviews = SellerReview.get_reviews_of_one_seller(seller_id)
     return render_template("social/review.html", reviews=reviews, review_type="seller_review")
