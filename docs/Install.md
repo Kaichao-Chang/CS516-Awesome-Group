@@ -76,3 +76,8 @@ Finally,
 flask run
 ```
 Access the ip and the webpage should appear. 
+
+Update codes and pull it with the following line:
+```sh
+git pull —rebase
+```
