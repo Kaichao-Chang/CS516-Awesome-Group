@@ -11,6 +11,9 @@ Make sure that the postgresql service is started.
 sudo service postgresql start
 ```
 
+```sh
+cd mini-amazon-skeleton
+```
 
 Run install.sh. It should ask you to set the password of DB user.  
 ```sh
