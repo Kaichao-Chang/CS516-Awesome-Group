@@ -51,7 +51,7 @@ WITH PASSWORD 'awesomegroup'
 
 Grant privileges to the user cs516
 ```sh
-ALTER USER cs516 WITH SUPERUSER;
+ALTER USER cs516 WITH SUPERUSER
 ```
 
 Now typing `\du` to terminate, you should see something like
