@@ -42,10 +42,11 @@ There should only be one user named postgres when checking with
 ```
 
 Create the user cs516 and set password.
+WITH PASSWORD '[THE PASSWORD YOU SET IN STEP 3]'
 ```sh
-CREATE USER cs516;
+CREATE USER cs516
 ALTER ROLE cs516 
-WITH PASSWORD '[THE PASSWORD YOU SET IN STEP 3]';
+WITH PASSWORD 'awesomegroup'
 ```
 
 Grant privileges to the user cs516
