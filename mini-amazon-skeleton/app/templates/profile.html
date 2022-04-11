@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>User Profile</h1>
+<h2>The followings are this user's basic information:</h2>
+<p><b>ID: </b>{{current_user.id}} <br> <b>Name:</b> {{current_user.firstname}}&nbsp;{{current_user.lastname}}</p>
+
+{% endblock %}
+
+
+  <!-- I will add another case when the user is a seller ... coming soon -->
