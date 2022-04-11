@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Sellers for {{product_name}}:</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Picture</th>
+      <th scope="col">Description</th>
+      <th scope="col">Seller</th>
+      <th scope="col">Price</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Add to Cart</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in product_list%}
+    <tr>
+      <th scope="row"><img src="{{ url_for('static', filename='/pic/' + product.img) }}" /> </th>
+      <td>{{product.descr}} </td>
+      <td>{{product.seller_name}} </td>
+      <td>{{product.price}}</td>
+      <td>{{product.inv}}</td>
+      <td>add to cart</td>
+    
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

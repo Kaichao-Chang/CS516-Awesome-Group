@@ -19,7 +19,8 @@ CREATE TABLE Products (
     overall_star FLOAT NOT NULL DEFAULT 0,
     cate VARCHAR(1),
     descr VARCHAR(255),
-    inv INT NOT NULL
+    inv INT NOT NULL,
+    img VARCHAR(255)
 );
 
 CREATE TABLE Purchases (

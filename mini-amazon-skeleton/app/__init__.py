@@ -27,4 +27,7 @@ def create_app():
     from .search import bp as search_bp
     app.register_blueprint(search_bp)
 
+    from .product_page import bp as product_page_bp
+    app.register_blueprint(product_page_bp)
+
     return app
