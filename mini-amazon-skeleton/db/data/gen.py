@@ -73,6 +73,8 @@ def gen_purchases(num_users, num_purchases, available_pids):
                 print(f"{id}", end=" ", flush=True)
             uid = fake.random_int(min=0, max=num_users - 1)
             pid = fake.random_element(elements=available_pids)
+            price = fake.random_int(min=1, max=80) # I add a new column named price in table Purchases
+            quantity = fake.random_int(min=1, max=3) # I add a new column named quantity in table Purchases
             time_purchased = fake.date_time()
             writer.writerow([id, uid, pid, time_purchased])
             available_uid_pid_pairs.append((uid, pid))
