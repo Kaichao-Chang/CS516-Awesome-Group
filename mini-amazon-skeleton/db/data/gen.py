@@ -32,7 +32,7 @@ def gen_users(num_users):
             lastname = name_components[-1]
             balance = 1000
             address = Durham, NC
-            writer.writerow([uid, email, password, firstname, lastname, balance, address, is_seller])
+            writer.writerow([uid, email, password, firstname, lastname, balance, address])
             available_uids.append(uid)
         print(f"{num_users} generated")
     return available_uids
