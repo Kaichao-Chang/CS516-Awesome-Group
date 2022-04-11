@@ -139,16 +139,34 @@ def items_on_sale():
 
 class InvChangeForm(FlaskForm):
     inv = IntegerField('Number of Items', validators=[DataRequired()])
+    submit = SubmitField('Post')
 
-
-@bp.route('/change_inv')
-def change_inv():
+@bp.route('/change_inv/<int:id>', methods = ['GET', 'POST'])
+def change_inv(id: int):
     form = InvChangeForm()
-    is_seller = Seller.is_seller(current_user.id)
     if form.validate_on_submit():
-        Product.post_item(form.name.data,
-                         form.price.data,
-                         current_user.id,
-                         form.number.data)
-        return redirect(url_for('index.index'))        
-    return render_template('post_item.html', title='Seller_Post', form=form, is_seller = is_seller)
+        Product.change_inv(id, form.inv.data)
+        return redirect(url_for('users.items_on_sale'))        
+    return render_template('change_inv.html', title='change_inv', form=form)
+
+class ProductRemoveForm(FlaskForm):
+    ans = StringField('Are you sure you want to delete this product from selling? (input "d" in the block below to delete)', validators=[DataRequired()])
+    submit = SubmitField('Post')
+
+    def validate_input(self, ans):
+        if ans.data != "d": 
+            raise ValidationError('Invalid Input. To delete, input "d" blow!')
+
+@bp.route('/remove_items/<int:id>', methods = ['GET', 'POST'])
+def remove_items(id: int):
+    form = ProductRemoveForm()
+    if form.validate_on_submit():
+        if form.ans.data == "d":
+            Product.product_remove(id)
+            return redirect(url_for('users.items_on_sale'))
+        else:
+            flash('Invalid Input. To delete, input "d" blow!')
+            return redirect(url_for('users.remove_items', id = id))
+    return render_template('remove_items.html', 
+        title='Product_Remove', form=form)
+

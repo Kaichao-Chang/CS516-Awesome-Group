@@ -10,7 +10,7 @@
       <th scope="col">Price</th>
       <th scope="col">Overall Star</th>
       <th scope="col">Inventory</th>
-      <th scope="col">Fulfillment Status</th>
+      <th scope="col">Delete Items</th>
     </tr>
   </thead>
 
@@ -19,8 +19,14 @@
       <tr>
         <th scope="row">{{sell_history.name}}</th>
         <td>{{sell_history.price}}</td>
-        <td>{{sell_history.overall_star}}</td>
-        <td>{{sell_history.inv}} <a href="{{ url_for('users.change_inv', item_name = sell_history.name) }}"> Alter </a> </td>
+        <td>
+          <a href="{{ url_for('social.product_reviews', product_id=sell_history.id) }}">
+            {{ sell_history.n_product_reviews }} Reviews
+          </a>
+          / {{ sell_history.product_overall_star }} Stars
+        </td>
+        <td>{{sell_history.inv}} <a href="{{ url_for('users.change_inv', id=sell_history.id) }}"> Alter </a> </td>
+        <td> <a href="{{ url_for('users.remove_items', id=sell_history.id) }}"> Delete </a> </td>
       </tr>
     {% endfor %}
   </tbody>

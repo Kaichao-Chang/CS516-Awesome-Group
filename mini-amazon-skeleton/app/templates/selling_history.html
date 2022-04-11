@@ -19,7 +19,12 @@
       <tr>
         <th scope="row">{{sell_history.name}}</th>
         <td>{{sell_history.price}}</td>
-        <td>{{sell_history.overall_star}}</td>
+        <td>
+          <a href="{{ url_for('social.product_reviews', product_id=sell_history.id) }}">
+            {{ sell_history.n_product_reviews }} Reviews
+          </a>
+          / {{ sell_history.product_overall_star }} Stars
+        </td>
         <td>{{sell_history.inv}}</td>
       </tr>
     {% endfor %}

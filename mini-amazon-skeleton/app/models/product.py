@@ -36,7 +36,7 @@ class Product:
             "ORDER BY Products.id DESC", available=available)
 
         seller_review_info = app.db.execute(
-            "SELECT COUNT(SellerReviews.id), AVG(SellerReviews.star) "
+            "SELECT COUNT(SellerReviews.id), COALESCE(AVG(SellerReviews.star), 0) "
             "FROM Products "
             "LEFT JOIN SellerReviews ON SellerReviews.seller_id = Products.seller_id "
             "WHERE available = :available "
@@ -66,26 +66,70 @@ class Product:
 
     @staticmethod
     def get_all_by_seller(uid):
-        sells = app.db.execute(
-            "SELECT id, name, price, available, seller_id, overall_star, inv "
+        product_info = app.db.execute(
+            "SELECT Products.id, name, price, available, seller_id, CONCAT(Users.firstname, ' ', Users.lastname) AS seller_name, overall_star, inv "
             "FROM Products "
-            "WHERE seller_id = :uid",
-            uid=uid)
+            "LEFT JOIN Users ON Products.seller_id = Users.id "
+            "WHERE seller_id = :seller_id "
+            "ORDER BY Products.id DESC", seller_id = uid)
 
-        seller_ids = tuple([sell[-3] for sell in sells])
+        seller_review_info = app.db.execute(
+            "SELECT COUNT(SellerReviews.id), COALESCE(AVG(SellerReviews.star), 0) "
+            "FROM Products "
+            "LEFT JOIN SellerReviews ON SellerReviews.seller_id = Products.seller_id "
+            "GROUP BY Products.id "
+            "ORDER BY Products.id DESC")
 
-        seller_names = app.db.execute(
-            "SELECT firstname, lastname "
-            "FROM Users "
-            "WHERE id IN :seller_ids",
-            seller_ids=seller_ids
+        product_review_info = app.db.execute(
+            "SELECT COUNT(ProductReviews.id)"
+            "FROM Products "
+            "LEFT JOIN ProductReviews ON ProductReviews.pid = Products.id "
+            "GROUP BY Products.id "
+            "ORDER BY Products.id DESC")
+
+        return [Product(*product_info[i], *seller_review_info[i], *product_review_info[i]) for i in range(len(product_info))]
+
+    @staticmethod
+    def items_on_sale(uid):
+        product_info = app.db.execute(
+            "SELECT Products.id, name, price, available, seller_id, CONCAT(Users.firstname, ' ', Users.lastname) AS seller_name, overall_star, inv "
+            "FROM Products "
+            "LEFT JOIN Users ON Products.seller_id = Users.id "
+            "WHERE seller_id = :seller_id "
+            "AND inv > 0"
+            "ORDER BY Products.id DESC", seller_id = uid)
+
+        seller_review_info = app.db.execute(
+            "SELECT COUNT(SellerReviews.id), COALESCE(AVG(SellerReviews.star), 0) "
+            "FROM Products "
+            "LEFT JOIN SellerReviews ON SellerReviews.seller_id = Products.seller_id "
+            "GROUP BY Products.id "
+            "ORDER BY Products.id DESC")
+
+        product_review_info = app.db.execute(
+            "SELECT COUNT(ProductReviews.id)"
+            "FROM Products "
+            "LEFT JOIN ProductReviews ON ProductReviews.pid = Products.id "
+            "GROUP BY Products.id "
+            "ORDER BY Products.id DESC")
+
+        return [Product(*product_info[i], *seller_review_info[i], *product_review_info[i]) for i in range(len(product_info))]
+
+
+    @staticmethod
+    def change_inv(id, inv):
+        app.db.execute(
+            "UPDATE Products "
+            "SET inv = :inv "
+            "WHERE id = :id",
+        id = id,
+        inv = inv
         )
 
-        a_list = []
-        for row, seller_name in zip(sells, seller_names):
-            row = list(row)
-            seller_name = list(seller_name)
-            row.append(" ".join(seller_name))
-            a_list.append(row)
-
-        return Product(*(a_list[0])) if a_list is not None else None
+    @staticmethod
+    def product_remove(id):
+        app.db.execute(
+            "DELETE FROM Products "
+            "WHERE id = :id ",
+        id = id
+        )
