@@ -1,4 +1,3 @@
-from curses import A_LEFT
 from flask import current_app as app
 
 
@@ -9,52 +8,50 @@ class Product:
                  price,
                  available,
                  seller_id,
-                 overall_star: float,
-                 inv,
-                 seller_name: str):
+                 seller_name: str,
+                 product_overall_star: float,
+                 inv: int,
+                 n_seller_reviews: int,
+                 seller_overall_star: float,
+                 n_product_reviews: int):
         self.id = id
         self.name = name
         self.price = price
         self.available = available
         self.seller_id = seller_id
         self.seller_name = seller_name
-        self.overall_star = round(overall_star)
+        self.product_overall_star = round(product_overall_star, 1)
         self.inv = inv
-
-    @staticmethod
-    def get(id):
-        rows = app.db.execute(
-            "SELECT id, name, price, available, seller_id, overall_star "
-            "FROM Products "
-            "WHERE id = :id",
-            id=id)
-        return Product(*(rows[0])) if rows is not None else None
+        self.n_seller_reviews = n_seller_reviews
+        self.seller_overall_star = round(seller_overall_star, 1)
+        self.n_product_reviews = n_product_reviews
 
     @staticmethod
     def get_all(available=True):
-        rows = app.db.execute(
-            "SELECT id, name, price, available, seller_id, overall_star, inv "
+        product_info = app.db.execute(
+            "SELECT Products.id, name, price, available, seller_id, CONCAT(Users.firstname, ' ', Users.lastname) AS seller_name, overall_star, inv "
             "FROM Products "
-            "WHERE available = :available ",
-            available=available)
-        print(rows)
-        seller_ids = tuple([row[-3] for row in rows])
-        
-        seller_names = app.db.execute(
-            "SELECT firstname, lastname "
-            "FROM Users "
-            "WHERE id IN :seller_ids",
-            seller_ids=seller_ids
-        )
+            "LEFT JOIN Users ON Products.seller_id = Users.id "
+            "WHERE available = :available "
+            "ORDER BY Products.id DESC", available=available)
 
-        args_list = []
-        for row, seller_name in zip(rows, seller_names):
-            row = list(row)
-            seller_name = list(seller_name)
-            row.append(" ".join(seller_name))
-            args_list.append(row)
+        seller_review_info = app.db.execute(
+            "SELECT COUNT(SellerReviews.id), AVG(SellerReviews.star) "
+            "FROM Products "
+            "LEFT JOIN SellerReviews ON SellerReviews.seller_id = Products.seller_id "
+            "WHERE available = :available "
+            "GROUP BY Products.id "
+            "ORDER BY Products.id DESC", available=available)
 
-        return [Product(*args) for args in args_list]
+        product_review_info = app.db.execute(
+            "SELECT COUNT(ProductReviews.id)"
+            "FROM Products "
+            "LEFT JOIN ProductReviews ON ProductReviews.pid = Products.id "
+            "WHERE available = :available "
+            "GROUP BY Products.id "
+            "ORDER BY Products.id DESC", available=available)
+
+        return [Product(*product_info[i], *seller_review_info[i], *product_review_info[i]) for i in range(len(product_info))]
 
     @staticmethod
     def post_item(name, price, uid, number):
@@ -65,47 +62,30 @@ class Product:
             name=name,
             price=price,
             uid=uid,
-            number = number)
-    
+            number=number)
+
     @staticmethod
-    def get_all_by_seller(seller_id):
-        rows = app.db.execute(
+    def get_all_by_seller(uid):
+        sells = app.db.execute(
             "SELECT id, name, price, available, seller_id, overall_star, inv "
             "FROM Products "
-            "WHERE seller_id = :seller_id ",
-            seller_id = seller_id)
-        
-        seller_name = [('a')]
+            "WHERE seller_id = :uid",
+            uid=uid)
 
-        args_list = []
-        for row in zip(rows):
-            row = list(row[0])
-            row.append(seller_name[0])
-            row = tuple(row)
-            args_list.append(row)
-        
-        print(args_list)
-        return [Product(*args) for args in args_list]
-    
-    @staticmethod
-    def items_on_sale(seller_id):
-        rows = app.db.execute(
-            "SELECT id, name, price, available, seller_id, overall_star, inv "
-            "FROM Products "
-            "WHERE seller_id = :seller_id "
-            "AND inv > 0 ",
-            seller_id = seller_id)
-        
-        seller_name = [('a')]
+        seller_ids = tuple([sell[-3] for sell in sells])
 
-        args_list = []
-        for row in zip(rows):
-            row = list(row[0])
-            row.append(seller_name[0])
-            row = tuple(row)
-            args_list.append(row)
-        
-        print(args_list)
-        return [Product(*args) for args in args_list]
+        seller_names = app.db.execute(
+            "SELECT firstname, lastname "
+            "FROM Users "
+            "WHERE id IN :seller_ids",
+            seller_ids=seller_ids
+        )
 
+        a_list = []
+        for row, seller_name in zip(sells, seller_names):
+            row = list(row)
+            seller_name = list(seller_name)
+            row.append(" ".join(seller_name))
+            a_list.append(row)
 
+        return Product(*(a_list[0])) if a_list is not None else None
