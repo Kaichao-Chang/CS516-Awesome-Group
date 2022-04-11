@@ -121,8 +121,8 @@ def seller_post():
 @bp.route('/selling_history')
 def selling_history():
     if current_user.is_authenticated:
-        sell_history = Product.get_all_by_seller(current_user.id)
+        avail_history = Product.get_all_by_seller(current_user.id)
     else:
-        sell_history = None
+        avail_history = None
     # render the page by adding information to the index.html file
-    return render_template('selling_history.html', sell_history = sell_history)
+    return render_template('selling_history.html', avail_history = avail_history)

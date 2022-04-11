@@ -1,3 +1,4 @@
+from curses import A_LEFT
 from flask import current_app as app
 
 
@@ -9,8 +10,8 @@ class Product:
                  available,
                  seller_id,
                  overall_star: float,
-                 seller_name: str, 
-                 inv):
+                 inv,
+                 seller_name: str):
         self.id = id
         self.name = name
         self.price = price
@@ -18,7 +19,7 @@ class Product:
         self.seller_id = seller_id
         self.seller_name = seller_name
         self.overall_star = round(overall_star)
-        inv = inv
+        self.inv = inv
 
     @staticmethod
     def get(id):
@@ -67,14 +68,13 @@ class Product:
             number = number)
     
     @staticmethod
-    def get_all_by_seller(uid):
-        sells = app.db.execute(
-            "SELECT id, name, price, available, seller_id, overall_star, ingv "
+    def get_all_by_seller(seller_id):
+        rows = app.db.execute(
+            "SELECT id, name, price, available, seller_id, overall_star, inv "
             "FROM Products "
-            "WHERE seller_id = :uid",
-            uid = uid)
-        
-        seller_ids = tuple([sell[-3] for sell in sells])
+            "WHERE seller_id = :seller_id ",
+            seller_id = seller_id)
+        seller_ids = tuple([row[-3] for row in rows])
         
         seller_names = app.db.execute(
             "SELECT firstname, lastname "
@@ -82,12 +82,15 @@ class Product:
             "WHERE id IN :seller_ids",
             seller_ids=seller_ids
         )
+        
+        seller_name = [('a')]
 
-        a_list = []
-        for row, seller_name in zip(sells, seller_names):
-            row = list(row)
-            seller_name = list(seller_name)
-            row.append(" ".join(seller_name))
-            a_list.append(row)
-
-        return Product(*(a_list[0])) if a_list is not None else None
+        args_list = []
+        for row in zip(rows):
+            row = list(row[0])
+            row.append(seller_name[0])
+            row = tuple(row)
+            args_list.append(row)
+        
+        print(args_list)
+        return [Product(*args) for args in args_list]

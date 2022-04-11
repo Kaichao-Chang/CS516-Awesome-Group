@@ -14,12 +14,14 @@
   </thead>
 
   <tbody>
-    <tr>
-      <th scope="row">{{sell_history.name}}</th>
-      <td>{{sell_history.price}}</td>
-      <td>{{sell_history.overall_star}}</td>
-      <td>{{sell_history.inv}}</td>
-    </tr>
+    {% for sell_history in avail_history%}
+      <tr>
+        <th scope="row">{{sell_history.name}}</th>
+        <td>{{sell_history.price}}</td>
+        <td>{{sell_history.overall_star}}</td>
+        <td>{{sell_history.inv}}</td>
+      </tr>
+    {% endfor %}
   </tbody>
 </table>
 <br><br>
