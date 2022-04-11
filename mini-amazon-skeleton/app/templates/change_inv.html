@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Register</h1>
+
+<form action="" method="post">
+  {{ form.hidden_tag() }}
+  {% if is_seller %}
+    <div class="text-center">
+    <p> <font size=8> You have registered as seller!</font> </p>
+    </div>
+    {% else %}
+    <p>
+      {{ form.seller_register.label }}<br/>
+      {{ form.seller_register(size=32) }}<br/>
+      {% for error in form.seller_register.errors %}
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    <p>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% endwith %}
+    </p>
+    <p>{{ form.submit() }}</p>
+   {% endif %} 
+  <a class="btn btn-secondary" href="{{ url_for('index.index') }}" role="button">Back to main page</a>
+</form>
+
+{% endblock %}

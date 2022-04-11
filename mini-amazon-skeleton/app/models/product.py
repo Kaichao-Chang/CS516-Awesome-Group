@@ -74,14 +74,6 @@ class Product:
             "FROM Products "
             "WHERE seller_id = :seller_id ",
             seller_id = seller_id)
-        seller_ids = tuple([row[-3] for row in rows])
-        
-        seller_names = app.db.execute(
-            "SELECT firstname, lastname "
-            "FROM Users "
-            "WHERE id IN :seller_ids",
-            seller_ids=seller_ids
-        )
         
         seller_name = [('a')]
 
@@ -94,3 +86,26 @@ class Product:
         
         print(args_list)
         return [Product(*args) for args in args_list]
+    
+    @staticmethod
+    def items_on_sale(seller_id):
+        rows = app.db.execute(
+            "SELECT id, name, price, available, seller_id, overall_star, inv "
+            "FROM Products "
+            "WHERE seller_id = :seller_id "
+            "AND inv > 0 ",
+            seller_id = seller_id)
+        
+        seller_name = [('a')]
+
+        args_list = []
+        for row in zip(rows):
+            row = list(row[0])
+            row.append(seller_name[0])
+            row = tuple(row)
+            args_list.append(row)
+        
+        print(args_list)
+        return [Product(*args) for args in args_list]
+
+

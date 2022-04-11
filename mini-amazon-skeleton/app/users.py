@@ -66,7 +66,6 @@ def register():
                          form.password.data,
                          form.firstname.data,
                          form.lastname.data):
-            flash('Congratulations, you are now a registered user!')
             return redirect(url_for('users.login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -120,9 +119,36 @@ def seller_post():
 
 @bp.route('/selling_history')
 def selling_history():
+    is_seller = Seller.is_seller(current_user.id)
     if current_user.is_authenticated:
         avail_history = Product.get_all_by_seller(current_user.id)
     else:
         avail_history = None
     # render the page by adding information to the index.html file
-    return render_template('selling_history.html', avail_history = avail_history)
+    return render_template('selling_history.html', avail_history = avail_history, is_seller = is_seller)
+
+@bp.route('/items_on_sale')
+def items_on_sale():
+    is_seller = Seller.is_seller(current_user.id)
+    if current_user.is_authenticated:
+        avail_history = Product.items_on_sale(current_user.id)
+    else:
+        avail_history = None
+    # render the page by adding information to the index.html file
+    return render_template('items_on_sale.html', avail_history = avail_history, is_seller = is_seller)
+
+class InvChangeForm(FlaskForm):
+    inv = IntegerField('Number of Items', validators=[DataRequired()])
+
+
+@bp.route('/change_inv')
+def change_inv():
+    form = InvChangeForm()
+    is_seller = Seller.is_seller(current_user.id)
+    if form.validate_on_submit():
+        Product.post_item(form.name.data,
+                         form.price.data,
+                         current_user.id,
+                         form.number.data)
+        return redirect(url_for('index.index'))        
+    return render_template('post_item.html', title='Seller_Post', form=form, is_seller = is_seller)

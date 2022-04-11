@@ -45,10 +45,11 @@
         <div class="dropdown-menu">
           <a class="dropdown-item" href="{{ url_for('users.seller_register') }}">Seller Registration</a>
           <a class="dropdown-item" href="{{ url_for('users.seller_post') }}">Post Item(s)</a>
+          <a class="dropdown-item" href="{{ url_for('users.items_on_sale') }}">Items on Sale</a>
           <a class="dropdown-item" href="{{ url_for('users.selling_history') }}">Selling History</a>
           <a class="dropdown-item" href="{{ url_for('social.my_product_reviews') }}">My Product Reviews</a>
           <a class="dropdown-item" href="{{ url_for('social.my_seller_reviews') }}">My Seller Reviews</a>
-          <a class="dropdown-item" href="{{ url_for('users.logout') }}">Logout</a>
+          <a class="dropdown-item" href="{{ url_for('users.logout') }}">Logout</a>         
         </div>
         <div class="text-center">
         {% if current_user.is_seller %} You have registered as seller! {% endif %} 
