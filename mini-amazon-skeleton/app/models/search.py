@@ -20,20 +20,24 @@ FROM Products """
                         """
 WHERE (name LIKE '%{}%' or descr LIKE '%{}%')
 AND cate = '{}'
+AND available = True
                         """.format(search_msg, search_msg, cate)
                 
                 elif search_msg:
                         sql += \
                         """
-WHERE name LIKE '%{}%' or descr LIKE '%{}%'
+WHERE (name LIKE '%{}%' or descr LIKE '%{}%')
+AND available = True
                         """.format(search_msg, search_msg)
-                elif search_msg and cate:
+                elif cate:
                         sql += \
                         """
 WHERE cate = '{}'
+AND available = True
                         """.format(cate)
 
-
+                else:
+                        sql += 'Where available = True\n'
                 if order == 1:
                         sql += "ORDER BY price"
                 elif order == 2:

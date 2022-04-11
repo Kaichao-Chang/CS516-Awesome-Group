@@ -169,4 +169,3 @@ def remove_items(id: int):
             return redirect(url_for('users.remove_items', id = id))
     return render_template('remove_items.html', 
         title='Product_Remove', form=form)
-
