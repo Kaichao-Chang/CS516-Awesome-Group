@@ -1,4 +1,4 @@
-Users({id}, email, password, firstname, lastname)
+Users({id}, email, password, firstname, lastname, address, balance)
 Products(id, name, available, seller_id, cate)
 Purchases(id, uid, pid, time_purchased)
 ProductReviews(id, uid, pid, content)
