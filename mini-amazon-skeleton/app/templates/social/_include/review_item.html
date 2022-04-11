@@ -1,0 +1,57 @@
+{% for review in reviews%}
+{% autoescape false %}
+<div class="row">
+    <div class="col-sm-2 review-user-box">
+        {% if review_type == "product_review" or review_type == "seller_review" %}
+        <b>{{ review.user_name}}</b>
+        {% elif review_type == "my_product_review"  %}
+        You comment on <br>
+        <a href="{{ url_for('social.product_reviews', product_id=review.product_id)}}"> {{ review.product_name }} </a>
+        {% elif review_type == "my_seller_review"  %}
+        You left comment for <br>
+        <a href="{{ url_for('social.seller_reviews', seller_id=review.seller_id)}}"> {{ review.seller_name }} </a>
+        {% endif %}
+        
+        <br/>
+        {{ review.created_at }}
+        <a class="rating" id="ur-{{ loop.index }}">
+            <i class="rating-star far fa-star"></i>
+            <i class="rating-star far fa-star"></i>
+            <i class="rating-star far fa-star"></i>
+            <i class="rating-star far fa-star"></i>
+            <i class="rating-star far fa-star"></i>
+        </a>
+        <script>
+            var stars = document.getElementById('ur-{{ loop.index }}').children;
+            renderRating(stars, {{ review.star }});
+        </script>
+        
+        <div class="upvote row">
+            {% if review_type == "product_review" or review_type == "seller_review" %}
+            <form class="col-6" method="post">
+                <input type="hidden" id="review-type" name="review-type" value="upvote">
+                <button class="btn" value="{{ review.review_id }}" id="review-id" name="review-id" type="submit">upvote({{ review.upvote }})</button>
+            </form>
+            {% endif %}
+        </div>
+
+    </div>
+    <div class="col-sm-10 review-content-box">
+        {{ review.content }}
+        <div class="row">
+            {% if (review_type == "product_review" or review_type == "seller_review") and current_user.id == review.user_id %}
+            <div class="col-12">
+                <form method="post" id="delete-form">
+                    <input type="hidden" name="review-type" value="delete">
+                    <button type="submit" class="btn btn-danger float-right">delete</button>
+                </form>
+                <button id="edit-button" onclick="click_edit_review()" class="btn btn-dark float-right">edit</button>
+                <script  type="module"> hid_component("review-editor") </script>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<hr class="dashed">
+{% endautoescape %}
+{% endfor %}

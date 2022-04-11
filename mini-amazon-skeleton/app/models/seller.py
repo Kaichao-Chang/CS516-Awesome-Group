@@ -1,8 +1,10 @@
 from ast import Not
 from pickle import FALSE, NONE, TRUE
-from flask_login import UserMixin, current_user
+
 from flask import current_app as app
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin, current_user
+from werkzeug.security import check_password_hash, generate_password_hash
+
 
 class Seller(UserMixin):
     def __init__(self, uid):

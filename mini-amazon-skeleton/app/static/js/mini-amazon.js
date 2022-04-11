@@ -7,3 +7,27 @@ function renderRating(stars, n) {
     for (i; i < n; i++) stars[i].className = starClassActive;
     for (i; i < starsLength; i++) stars[i].className = starClassUnactive;
  }
+
+function hid_component(component_id) {
+    var x = document.getElementById(component_id);
+    x.style.display = "none";
+}
+
+function show_component(component_id) {
+    var x = document.getElementById(component_id);
+    if (x.style.display == "none"){
+        x.style.display = "block";
+    }
+}
+
+function change_value(selector, value) {
+    var x = document.querySelector(selector);
+    x.value = value;
+}
+
+function click_edit_review() {
+    show_component('review-editor'); 
+    hid_component('edit-button');
+    change_value('#review-editor #review-type', 'update')
+    window.location.hash = 'review-editor';
+}

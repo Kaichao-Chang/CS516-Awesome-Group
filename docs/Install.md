@@ -11,6 +11,9 @@ Make sure that the postgresql service is started.
 sudo service postgresql start
 ```
 
+```sh
+cd mini-amazon-skeleton
+```
 
 Run install.sh. It should ask you to set the password of DB user.  
 ```sh
@@ -39,15 +42,16 @@ There should only be one user named postgres when checking with
 ```
 
 Create the user cs516 and set password.
+WITH PASSWORD '[THE PASSWORD YOU SET IN STEP 3]'
 ```sh
-CREATE USER cs516;
+CREATE USER cs516
 ALTER ROLE cs516 
-WITH PASSWORD '[THE PASSWORD YOU SET IN STEP 3]';
+WITH PASSWORD 'awesomegroup'
 ```
 
 Grant privileges to the user cs516
 ```sh
-ALTER USER cs516 WITH SUPERUSER;
+ALTER USER cs516 WITH SUPERUSER
 ```
 
 Now typing `\du` to terminate, you should see something like
@@ -72,3 +76,8 @@ Finally,
 flask run
 ```
 Access the ip and the webpage should appear. 
+
+Update codes and pull it with the following line:
+```sh
+git pull —rebase
+```

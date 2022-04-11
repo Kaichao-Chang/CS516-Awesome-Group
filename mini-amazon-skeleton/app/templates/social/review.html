@@ -2,12 +2,12 @@
 
 {% block content %}
 
-{% for review in product_reviews%}
-{% include 'social/_include/reviews.html' %}
-{% endfor %}
+{% include 'social/_include/review_item.html' %}
 
+{% if review_type == "product_review" or review_type == "seller_review" %}
 {% if current_user.is_authenticated %}
 {% include 'social/_include/review_form.html' %}
+{% endif %}
 {% endif %}
 
 {% endblock %}

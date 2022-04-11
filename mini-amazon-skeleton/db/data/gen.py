@@ -53,9 +53,11 @@ def gen_products(num_products, avaliable_uid):
             seller_id = fake.random_element(elements=avaliable_uid)
             overall_star = 0
             inv = fake.random_int(1, 20)
+            cate = "c"
+            desc = fake.sentence(nb_words=4)[:-1]
 
             writer.writerow(
-                [pid, name, price, available, seller_id, overall_star, inv])
+                [pid, name, price, available, seller_id, overall_star, cate, desc, inv])
         print(f"{num_products} generated; {len(available_pids)} available")
 
     return available_pids
