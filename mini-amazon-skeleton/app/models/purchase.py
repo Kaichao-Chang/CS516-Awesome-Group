@@ -1,3 +1,4 @@
+"""
 from flask import current_app as app
 from .product import Product
 from flask_login import current_user
@@ -37,10 +38,8 @@ class Purchase:
         uid=uid,
         since=since)
         return [Purchase(*row) for row in rows]
-
-
-    
 """
+    
 from flask import current_app as app
 
 
@@ -80,4 +79,3 @@ ORDER BY time_purchased DESC
                               uid=uid,
                               since=since)
         return [Purchase(*row) for row in rows]
-"""
