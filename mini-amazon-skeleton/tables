@@ -1,5 +1,5 @@
 Users({id}, email, password, firstname, lastname, address, balance)
-Products(id, name, available, seller_id, cate)
+Products(pid, name, price, available, seller_id, overall_star, cate, desc, inv)
 Purchases(id, uid, pid, price, quantity, time_purchased)
 ProductReviews(id, uid, pid, content)
 SellerReviews(id, customer_id, seller_id, content)

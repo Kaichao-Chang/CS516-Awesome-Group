@@ -67,4 +67,3 @@ CREATE TABLE Sales (
     time_purchased timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
     sale_status TEXT NOT NULL
 );
-
