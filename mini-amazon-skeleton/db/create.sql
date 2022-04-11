@@ -5,7 +5,9 @@ CREATE TABLE Users (
     email VARCHAR UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     firstname VARCHAR(255) NOT NULL,
-    lastname VARCHAR(255) NOT NULL
+    lastname VARCHAR(255) NOT NULL,
+    address VARCHAR(255),
+    balance DECIMAL(12, 2) NOT NULL DEFAULT 0
 );
 
 CREATE TABLE Products (

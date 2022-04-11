@@ -2,9 +2,10 @@ from flask import current_app as app
 
 
 class Seller_purchase:
-    def __init__(self, id, uid, pid, seller_id, quantity, fulfilled_by_seller, time_purchased):
+    def __init__(self, id, uid, buyer_id, pid, seller_id, quantity, fulfilled_by_seller, time_purchased):
         self.id = id
         self.uid = uid
+        self.buyer_id = buyer_id
         self.pid = pid
         self.seller_id = seller_id
         self.quantity = quantity
@@ -14,7 +15,7 @@ class Seller_purchase:
     @staticmethod
     def get_all_by_seller(uid):
         rows = app.db.execute(
-            "SELECT * "
+            "SELECT "
             "From Purchases "
             "WHERE seller_id = :uid "
             "ORDER BY time_purchased DESC",

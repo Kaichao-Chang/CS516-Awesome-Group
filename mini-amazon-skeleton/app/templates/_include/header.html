@@ -47,12 +47,13 @@
           <a class="dropdown-item" href="{{ url_for('users.seller_post') }}">Post Item(s)</a>
           <a class="dropdown-item" href="{{ url_for('users.items_on_sale') }}">Items on Sale</a>
           <a class="dropdown-item" href="{{ url_for('users.selling_history') }}">History of Selling Orders</a>
+          <a class="dropdown-item" href="{{ url_for('users.selling_items_history') }}">History of Selling Items</a>
           <a class="dropdown-item" href="{{ url_for('social.my_product_reviews') }}">My Product Reviews</a>
           <a class="dropdown-item" href="{{ url_for('social.my_seller_reviews') }}">My Seller Reviews</a>
           <a class="dropdown-item" href="{{ url_for('users.logout') }}">Logout</a>         
         </div>
         <div class="text-center">
-        {% if current_user.is_seller %} You have registered as seller! {% endif %} 
+        {% if current_user.is_seller %} You have registered as a seller! {% endif %} 
         </div>
         {% else %}
         <a href="{{ url_for('users.login') }}" type="button" class="btn btn-dark">

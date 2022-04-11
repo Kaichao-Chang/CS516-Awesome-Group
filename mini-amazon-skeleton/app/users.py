@@ -171,3 +171,12 @@ def remove_items(id: int):
     return render_template('remove_items.html', 
         title='Product_Remove', form=form)
 
+@bp.route('/selling_items_history')
+def selling_items_history():
+    is_seller = Seller.is_seller(current_user.id)
+    if current_user.is_authenticated:
+        avail_history = Product.selling_items_history(current_user.id)
+    else:
+        avail_history = None
+    # render the page by adding information to the index.html file
+    return render_template('selling_items_history.html', avail_history = avail_history, is_seller = is_seller)
