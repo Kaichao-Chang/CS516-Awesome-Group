@@ -30,7 +30,9 @@ def gen_users(num_users):
             name_components = profile["name"].split(" ")
             firstname = name_components[0]
             lastname = name_components[-1]
-            writer.writerow([uid, email, password, firstname, lastname])
+            address = fake.text().replace("\n", "<br>") # I add a new column named address in table Users
+            balance = fake.random_int(min=100, max=5000) # I add a new column named balance in table Users
+            writer.writerow([uid, email, password, firstname, lastname, address, balance])
             available_uids.append(uid)
         print(f"{num_users} generated")
     return available_uids
@@ -73,8 +75,10 @@ def gen_purchases(num_users, num_purchases, available_pids):
                 print(f"{id}", end=" ", flush=True)
             uid = fake.random_int(min=0, max=num_users - 1)
             pid = fake.random_element(elements=available_pids)
+            price = fake.random_int(min=1, max=80) # I add a new column named price in table Purchases
+            quantity = fake.random_int(min=1, max=3) # I add a new column named quantity in table Purchases
             time_purchased = fake.date_time()
-            writer.writerow([id, uid, pid, time_purchased])
+            writer.writerow([id, uid, pid, price, quantity, time_purchased])
             available_uid_pid_pairs.append((uid, pid))
         print(f"{num_purchases} generated")
     return available_uid_pid_pairs
