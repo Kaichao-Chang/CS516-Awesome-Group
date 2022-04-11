@@ -73,8 +73,11 @@ def gen_purchases(num_users, num_purchases, available_pids):
                 print(f"{id}", end=" ", flush=True)
             uid = fake.random_int(min=0, max=num_users - 1)
             pid = fake.random_element(elements=available_pids)
+            seller_id = fake.random_int(min=0, max=num_users - 1)
+            fulfill_by_seller = fake.random_element(elements=("true", "false"))
+            quantity = fake.random_int(min=0, max=10)
             time_purchased = fake.date_time()
-            writer.writerow([id, uid, pid, time_purchased])
+            writer.writerow([id, uid, pid, seller_id, quantity, fulfill_by_seller, time_purchased])
             available_uid_pid_pairs.append((uid, pid))
         print(f"{num_purchases} generated")
     return available_uid_pid_pairs
