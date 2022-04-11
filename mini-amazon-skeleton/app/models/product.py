@@ -115,6 +115,30 @@ class Product:
 
         return [Product(*product_info[i], *seller_review_info[i], *product_review_info[i]) for i in range(len(product_info))]
 
+    @staticmethod
+    def all_selling_items(uid):
+        product_info = app.db.execute(
+            "SELECT Products.id, name, price, available, seller_id, CONCAT(Users.firstname, ' ', Users.lastname) AS seller_name, overall_star, inv "
+            "FROM Products "
+            "LEFT JOIN Users ON Products.seller_id = Users.id "
+            "WHERE seller_id = :seller_id "
+            "ORDER BY Products.id DESC", seller_id = uid)
+
+        seller_review_info = app.db.execute(
+            "SELECT COUNT(SellerReviews.id), COALESCE(AVG(SellerReviews.star), 0) "
+            "FROM Products "
+            "LEFT JOIN SellerReviews ON SellerReviews.seller_id = Products.seller_id "
+            "GROUP BY Products.id "
+            "ORDER BY Products.id DESC")
+
+        product_review_info = app.db.execute(
+            "SELECT COUNT(ProductReviews.id)"
+            "FROM Products "
+            "LEFT JOIN ProductReviews ON ProductReviews.pid = Products.id "
+            "GROUP BY Products.id "
+            "ORDER BY Products.id DESC")
+
+        return [Product(*product_info[i], *seller_review_info[i], *product_review_info[i]) for i in range(len(product_info))]
 
     @staticmethod
     def change_inv(id, inv):

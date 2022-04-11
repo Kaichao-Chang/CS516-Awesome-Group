@@ -30,7 +30,9 @@ def gen_users(num_users):
             name_components = profile["name"].split(" ")
             firstname = name_components[0]
             lastname = name_components[-1]
-            writer.writerow([uid, email, password, firstname, lastname])
+            balance = 1000
+            address = Durham, NC
+            writer.writerow([uid, email, password, firstname, lastname, balance, address])
             available_uids.append(uid)
         print(f"{num_users} generated")
     return available_uids

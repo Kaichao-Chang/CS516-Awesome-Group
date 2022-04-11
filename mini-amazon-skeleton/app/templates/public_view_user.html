@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>User Profile</h1>
+<h2>The followings are this user's basic information:</h2>
+<p><b>id: </b>{{current_user.id}} <br> <b>first_name:</b> {{current_user.firstname}}&nbsp;{{current_user.lastname}}</p>
+    <!-- or user -->
+
+
+<!-- I will add another case when the user is a seller ... 
+{% if user.is_seller %}
+<b>Email:  </b><u>{{user.email}}</u><br/>
+<b>Address:  </b><u>{{user.address}}</u><br/>
+    
+    
+    <br/><br/><h2>Reviews:</h2><br/>
+    
+    <ol>
+    {% for review in user.reviews %}
+    <li>{% for star in range(5) %}
+            {% if star+1 <= review.rating %}
+                &#9733;
+            {% endif %}
+            {% if star+1 > review.rating %}
+                &#9734;
+            {% endif %}
+        {% endfor %}
+        </br>
+        <b><u>{{review.title}}</u></b> </br>
+        {{review.body}} </br>
+        <a href="{{ url_for('users.user_public_view', id=review.uid) }}">See who give this rating</a>
+        
+        <br/></br>
+    {% endfor %}
+    </ol>
+{% endif %}
+-->
+
+{% endblock %}

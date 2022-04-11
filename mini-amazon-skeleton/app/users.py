@@ -11,6 +11,7 @@ from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 from .models.user import User
 from .models.seller import Seller
 from .models.product import Product
+from .models.seller_purchase import Seller_purchase
 
 bp = Blueprint('users', __name__)
 
@@ -121,7 +122,7 @@ def seller_post():
 def selling_history():
     is_seller = Seller.is_seller(current_user.id)
     if current_user.is_authenticated:
-        avail_history = Product.get_all_by_seller(current_user.id)
+        avail_history = Seller_purchase.get_all_by_seller(current_user.id)
     else:
         avail_history = None
     # render the page by adding information to the index.html file
@@ -155,7 +156,7 @@ class ProductRemoveForm(FlaskForm):
 
     def validate_input(self, ans):
         if ans.data != "d": 
-            raise ValidationError('Invalid Input. To delete, input "d" blow!')
+            raise ValidationError('Invalid Input. To delete, input "d" above!')
 
 @bp.route('/remove_items/<int:id>', methods = ['GET', 'POST'])
 def remove_items(id: int):
