@@ -8,7 +8,7 @@ echo "You may need to tweak .flashenv and db/setup.sh manually"
 # sudo apt-get -qq coreutils
 mypath=`realpath $0`
 mybase=`dirname $mypath`
-user=`whoami`
+user=`cs516`
 echo "Assume your database user name is: $user"
 read -p "Enter database password and press [ENTER]: " dbpasswd
 
