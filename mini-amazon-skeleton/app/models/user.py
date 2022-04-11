@@ -1,3 +1,4 @@
+"""
 # https://stackoverflow.com/questions/63231163/what-is-the-usermixin-in-flask
 from flask_login import UserMixin
 # https://blog.csdn.net/h18208975507/article/details/108106506
@@ -195,11 +196,10 @@ class User(UserMixin):
         WHERE id = :id""",
         id=id)
         return rows[0][0]
-
+"""
     
     
 
-'''
 from flask_login import UserMixin
 from flask import current_app as app
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -269,5 +269,4 @@ WHERE id = :id
 """,
                               id=id)
         return User(*(rows[0])) if rows else None
-'''
 
