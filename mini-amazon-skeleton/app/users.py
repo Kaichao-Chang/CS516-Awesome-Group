@@ -125,7 +125,6 @@ def selling_history():
         avail_history = Seller_purchase.get_all_by_seller(current_user.id)
     else:
         avail_history = None
-    # render the page by adding information to the index.html file
     return render_template('selling_history.html', avail_history = avail_history, is_seller = is_seller)
 
 @bp.route('/items_on_sale')
@@ -135,7 +134,6 @@ def items_on_sale():
         avail_history = Product.items_on_sale(current_user.id)
     else:
         avail_history = None
-    # render the page by adding information to the index.html file
     return render_template('items_on_sale.html', avail_history = avail_history, is_seller = is_seller)
 
 class InvChangeForm(FlaskForm):
@@ -178,15 +176,40 @@ def selling_items_history():
         avail_history = Product.selling_items_history(current_user.id)
     else:
         avail_history = None
-    # render the page by adding information to the index.html file
     return render_template('selling_items_history.html', avail_history = avail_history, is_seller = is_seller)
 
 @bp.route('/detailed_order/<int:pid>', methods = ['GET', 'POST'])
 def detailed_order(pid: int):
+    p_name = Seller_purchase.get_product_name(pid)
+    p_name = list(p_name[0])
     if current_user.is_authenticated:
         avail_history = Seller_purchase.get_all_by_product(pid, current_user.id)
     else:
         avail_history = None
-    # render the page by adding information to the index.html file
-    return render_template('selling_history.html', avail_history = avail_history, is_seller = is_seller)
+    return render_template('order_details.html', avail_history = avail_history, p_name = p_name[0])
 
+class OrderFulfilledForm(FlaskForm):
+    ans = StringField('Are you sure you want to fuifilled this following order? (input "f" in the block below to fulfill)', validators=[DataRequired()])
+    submit = SubmitField('Post')
+
+    def validate_input(self, ans):
+        if ans.data != "f": 
+            raise ValidationError('Invalid Input. To fulfill this order, input "f" above!')
+
+@bp.route('/fulfilled/<int:id>', methods = ['GET', 'POST'])
+def fulfilled(id: int):
+    form = OrderFulfilledForm()
+    avail_history = Seller_purchase.get_all_by_purchaseid(current_user.id, id)
+    if form.validate_on_submit():
+        if form.ans.data == "f":
+            if Seller_purchase.enough_inv(id):
+                Seller_purchase.order_fulfill(id)
+                return redirect(url_for('users.selling_history'))
+            else:
+                flash('Not enough inventory for this order. To fulfill this order, please alter the inventory in the items on sale page.')
+                return redirect(url_for('users.fulfilled', id = id))
+        else:
+            flash('Invalid Input. To fulfill this order, input "f" blow!')
+            return redirect(url_for('users.fulfilled', id = id))
+    return render_template('order_fulfilled.html', 
+        title='order_fulfilled', form=form, avail_history=avail_history)
