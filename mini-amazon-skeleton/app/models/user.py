@@ -127,40 +127,6 @@ class User(UserMixin):
         id=id)
         return User(*(rows[0])) if rows else None
 
-#    # requirement 2: Each user account has a system-assigned id.
-#    @staticmethod
-#    @login.user_loader
-#    def get(id):
-#    # input of the function get_id is a user's id, and the output is a user's object, 
-#    # including users' infor like id, email, firstname, and lastname.
-#        rows = app.db.execute(
-#        """
-#        SELECT id, email, firstname, lastname, address, SellerReviews.id
-#        FROM Users
-#        LEFT JOIN SellerReviews ON id = SellerReviews.id
-#        WHERE id = :id
-#        GROUP BY id, email, firstname, lastname, address, SellerReviews.id""",
-#        id=id)
-#        return User(*(rows[0])) if rows else None
-
-#    @staticmethod
-#    @login.user_loader
-#    def get(id):
-#        rows = app.db.execute(
-#        """
-#        SELECT id, email, firstname, lastname, address, 
-#        CASE 
-#            WHEN id in (SELECT id FROM Sellers) THEN true ELSE false
-#        END AS is_seller,
-#       email_confirm, ARRAY_AGG(title), ARRAY_AGG(body), ARRAY_AGG(rating), ARRAY_AGG(uid)
-#       FROM Users 
-#       LEFT JOIN Reviews_sellers ON id = sid
-#       WHERE id = :id
-#       GROUP BY id, email, firstname, lastname, address, sid, email_confirm""",
-#       id=id)
-#       return User(*(rows[0])) if rows else None
-
-
     # requirement 2: Users can update all information except the id.
         # after updating the user's information, this function will return the user's unique id
     @staticmethod
