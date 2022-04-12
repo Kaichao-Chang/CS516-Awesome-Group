@@ -89,9 +89,6 @@ def logout():
 
 
 
-
-
-# class UpdateProfileForm might have bugs; can double check!
 class UpdateProfileForm(FlaskForm): 
     firstname = StringField('Your First Name', validators=[DataRequired()]) 
     lastname = StringField('Your Last Name', validators=[DataRequired()])
@@ -103,9 +100,8 @@ class UpdateProfileForm(FlaskForm):
         if email.data != current_user.email and User.email_exists(email.data):
             raise ValidationError('Already a user with this email.')
 
-# might have bugs; can double check!
-@bp.route('/profile', methods=['GET', 'POST'])
-def profile():
+@bp.route('/account', methods=['GET', 'POST'])
+def account():
 
     form = UpdateProfileForm()
     if form.validate_on_submit():
@@ -114,8 +110,8 @@ def profile():
                          form.lastname.data,
                          form.address.data):
             flash('Your profile are updated!')
-            return redirect(url_for('users.profile'))
-    return render_template("account_infor.html")
+            return redirect(url_for('users.account'))
+    return render_template("account.html",  title='Profile_Infor', form=form)
 
 
 
