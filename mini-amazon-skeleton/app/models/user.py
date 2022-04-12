@@ -1,11 +1,10 @@
 # https://stackoverflow.com/questions/63231163/what-is-the-usermixin-in-flask
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 # https://blog.csdn.net/h18208975507/article/details/108106506
 from werkzeug.security import check_password_hash
 # https://werkzeug.palletsprojects.com/en/1.0.x/utils/
 from werkzeug.security import generate_password_hash
 
-from flask_login import current_user
 from flask import current_app as app
 
 from .. import login
@@ -165,8 +164,9 @@ class User(UserMixin):
     # requirement 2: Users can update all information except the id.
         # after updating the user's information, this function will return the user's unique id
     @staticmethod
-    def update_infor(id, email, firstname, lastname, address):
+    def update_infor (email, firstname, lastname, address):
         try:
+            id = current_user.id
             rows = app.db.execute(
             """
             UPDATE Users
@@ -187,17 +187,19 @@ class User(UserMixin):
     # requirement 2: Users can update the password. 
         # after updating the user's password, this function will return the user's unique id
     @staticmethod
-    def update_password(id, password):
+    def update_password(password):
+        id = current_user.id
         rows = app.db.execute(
-        """
-        upate Users
-        set password = :password
-        where id = :id
-        returning id""",
+            """
+            update Users
+            set password = :password
+            where id = :id
+            returning id""",
         password=generate_password_hash(password),
         id=id)
         id = rows[0][0]
         return User.get(id)
+
 
     # requirement 3: find the corresponding account balance, if id is given
         # if the id exists in table Users, this function will return the corresponding balance of that user

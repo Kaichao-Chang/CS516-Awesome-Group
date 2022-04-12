@@ -2,13 +2,14 @@ from cgi import print_exception
 from operator import is_
 from unicodedata import name
 # from flask import Blueprint, flash, redirect, render_template, request, url_for
-from flask import Blueprint, flash, redirect, render_template, request, url_for, flash, current_app as app, g
+from flask import Blueprint, flash, redirect, render_template, request, url_for, flash, Markup, current_app as app, g
 from flask_login import current_user, login_user, logout_user
 from flask_wtf import FlaskForm
 from werkzeug.urls import url_parse
 from werkzeug.datastructures import MultiDict
 from wtforms import BooleanField, PasswordField, StringField, SubmitField, DecimalField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, NumberRange
+from wtforms.widgets.core import HTMLString, html_params, escape
 from itsdangerous import URLSafeTimedSerializer
 
 from .models.user import User
@@ -87,22 +88,20 @@ def logout():
 
 
 
-
-
+############################################### Update ###############################################
 class UpdateProfileForm(FlaskForm): 
-    firstname = StringField('Your First Name', validators=[DataRequired()]) 
-    lastname = StringField('Your Last Name', validators=[DataRequired()])
-    email = StringField('Your Email', validators=[DataRequired(), Email()])
-    address = StringField('Your Address', validators=[DataRequired()])
+    firstname = StringField('Your First Name', validators=[DataRequired('Please enter your first name here:')]) 
+    lastname = StringField('Your Last Name', validators=[DataRequired('Please enter your last name here:')])
+    email = StringField('Your Email', validators=[DataRequired('Please enter your email address here:'), Email()])
+    address = StringField('Your Address', validators=[DataRequired('Please enter your address here:')])
     submit = SubmitField('Update Your Profile')
 
     def validate_email(self, email):
-        if email.data != current_user.email and User.email_exists(email.data):
+        if User.email_exists(email.data) and email.data != current_user.email:
             raise ValidationError('Already a user with this email.')
 
 @bp.route('/account', methods=['GET', 'POST'])
 def account():
-
     form = UpdateProfileForm()
     if form.validate_on_submit():
         if User.update_infor(form.email.data,
@@ -111,10 +110,38 @@ def account():
                          form.address.data):
             flash('Your profile are updated!')
             return redirect(url_for('users.account'))
-    return render_template("account.html",  title='Profile_Infor', form=form)
+    return render_template("account.html",  form=form)
+
+
+class UpdatePasswordForm(FlaskForm): 
+    curr_pwd = PasswordField('Your First Name', validators=[DataRequired('Please enter your current password here:')]) 
+    new_pwd = PasswordField('Your New Password', validators=[DataRequired('Please enter your new password here:')])   
+    retype_pwd = PasswordField('Re-enter Your New Password', validators=[DataRequired('Please re-enter your new password here:'), EqualTo('new_pwd')])
+    submit = SubmitField('Update Password')
+
+    def validate_curr_pwd(self,curr_pwd): 
+        if User.get_by_auth(current_user.email, curr_pwd.data) is None: 
+            raise ValidationError('The current password you input is incorrect.')
+
+@bp.route('/password', methods=['GET', 'POST'])
+def password():
+    form = UpdatePasswordForm()
+    if form.validate_on_submit():
+        if User.update_password(form.new_pwd.data):
+            flash('You have changed your password!')
+            return redirect(url_for('users.password'))
+    return render_template('change_password.html', title='Password', form=form)
+        
+       
+
+############# Balance functions to be added in the following #################
+#......
 
 
 
+@bp.route('/profile', methods=['GET', 'POST'])
+def profile():
+    return render_template("public_view_user.html")
 
 
 ############################### Celia added some functions for Part 1 above this line #################################
