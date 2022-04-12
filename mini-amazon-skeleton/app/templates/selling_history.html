@@ -7,26 +7,25 @@
   <thead class="thead-dark">
     <tr>
       <th scope="col">Product Name</th>
-      <th scope="col">Price</th>
-      <th scope="col">Buyer Name</th>
+      <th scope="col">Price Per One Item</th>
       <th scope="col">Quantity</th>
-      <th scope="col">Fulfillment Status</th>
+      <th scope="col">Buyer Name</th>
+      <th scope="col">Buyer Address</th>
       <th scope="col">Purchase Time</th>
+      <th scope="col">Fulfillment Status</th>
     </tr>
   </thead>
 
   <tbody>
-    {% for sell_history in avail_history%}
+    {% for avail in avail_history%}
       <tr>
-        <th scope="row">{{sell_history.name}}</th>
-        <td>{{sell_history.price}}</td>
-        <td>
-          <a href="{{ url_for('social.product_reviews', product_id=sell_history.id) }}">
-            {{ sell_history.n_product_reviews }} Reviews
-          </a>
-          / {{ sell_history.product_overall_star }} Stars
-        </td>
-        <td>{{sell_history.inv}}</td>
+        <th scope="row">{{avail.p_name}}</th>
+        <td>{{avail.price}}</td>
+        <td>{{avail.quantity}}</td>
+        <td>{{avail.buyer_fname}} {{avail.buyer_lname}}</td>
+        <td>{{avail.buyer_addr}}</td>
+        <td>{{avail.time_purchased}}</td>
+        <td>{{avail.fulfilled_by_seller}}</td>
       </tr>
     {% endfor %}
   </tbody>
