@@ -5,7 +5,7 @@
           src="{{ url_for('static', filename='images/banana.jpg') }}"></a>
     </div>
 
-    <div class="col-sm-8 search-bar">
+    <div class="col-sm-12 search-bar">
       <form action="/search" method="post" class="input-group mb-3">
         <!-- <div class="input-group-prepend">
           <select class="custom-select" name="type">
@@ -43,6 +43,8 @@
         <button class="btn btn-outline-secondary dropdown-toggle btn-sm" type="button" data-toggle="dropdown"
           aria-haspopup="true" aria-expanded="false"></button>
         <div class="dropdown-menu">
+          <a class="dropdown-item" href="{{ url_for('users.account') }}">Update My Profile</a>
+          <a class="dropdown-item" href="{{ url_for('users.password') }}">Change My Password</a>
           <a class="dropdown-item" href="{{ url_for('users.seller_register') }}">Seller Registration</a>
           <a class="dropdown-item" href="{{ url_for('users.seller_post') }}">Post Item(s)</a>
           <a class="dropdown-item" href="{{ url_for('users.items_on_sale') }}">Items on Sale</a>
