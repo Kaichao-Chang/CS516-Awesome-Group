@@ -11,6 +11,7 @@
       <th scope="col">Overall Star</th>
       <th scope="col">Inventory</th>
       <th scope="col">Availability</th>
+      <th scope="col">Detailed Order Information</th>
     </tr>
   </thead>
 
@@ -27,9 +28,14 @@
         </td>
         <td>{{sell_history.inv}} </a> </td>
         <td>{% if sell_history.available %} Still Selling 
-            {% else %} Already Deleted
+            {% else %} Already Deleted by You
             {% endif %}
           </a> </td>
+          <td>
+            <a href="{{ url_for('users.detailed_order', pid=sell_history.id) }}">
+            Details
+            </a>
+          </td>
       </tr>
     {% endfor %}
   </tbody>

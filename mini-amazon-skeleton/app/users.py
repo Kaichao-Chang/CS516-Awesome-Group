@@ -180,3 +180,13 @@ def selling_items_history():
         avail_history = None
     # render the page by adding information to the index.html file
     return render_template('selling_items_history.html', avail_history = avail_history, is_seller = is_seller)
+
+@bp.route('/detailed_order/<int:pid>', methods = ['GET', 'POST'])
+def detailed_order(pid: int):
+    if current_user.is_authenticated:
+        avail_history = Seller_purchase.get_all_by_product(pid, current_user.id)
+    else:
+        avail_history = None
+    # render the page by adding information to the index.html file
+    return render_template('selling_history.html', avail_history = avail_history, is_seller = is_seller)
+

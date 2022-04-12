@@ -2,7 +2,7 @@ from flask import current_app as app
 
 
 class Seller_purchase:
-    def __init__(self, id, uid, buyer_fname, buyer_lname, buyer_addr, pid, seller_id, quantity, fulfilled_by_seller, time_purchased, p_name, price):
+    def __init__(self, id, uid, buyer_fname, buyer_lname, buyer_addr, pid, seller_id, quantity, fulfilled_by_seller, time_purchased, p_name, price, time_fulfilled):
         self.id = id
         self.uid = uid
         self.buyer_fname = buyer_fname
@@ -15,16 +15,19 @@ class Seller_purchase:
         self.time_purchased = time_purchased
         self.p_name = p_name
         self.price = price 
+        self.time_fulfilled = time_fulfilled
 
     @staticmethod
     def get_all_by_seller(uid):
         rows = app.db.execute(
-            "SELECT Purchases.id, Users.id, Users.firstname, Users.lastname, Users.address, Purchases.pid, Purchases.seller_id, Purchases.quantity, Purchases.fulfill_by_seller, Purchases.time_purchased, Products.name, Products.price "
+            "SELECT Purchases.id, Users.id, Users.firstname, Users.lastname, Users.address, Purchases.pid, Purchases.seller_id, Purchases.quantity, Purchases.fulfill_by_seller, Purchases.time_purchased, Products.name, Products.price * Purchases.quantity "
             "From Purchases "
             "LEFT JOIN Users  "
             "ON Purchases.uid = Users.id "
             "LEFT JOIN Products "
             "ON Purchases.pid = Products.id "
+            "LEFT JOIN Order_fulfill "
+            "ON Purchases.id = Order_fulfill.id "
             "WHERE Purchases.seller_id = :uid "
             "ORDER BY time_purchased DESC",
                               uid=uid)
