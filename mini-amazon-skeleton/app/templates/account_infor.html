@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Account Information</h1>
+<p> My Unique Account ID <br>
+<input type ="text" name = "id" size=32 value = {{current_user.id}} disabled><br/>
+</p>
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    
+    <p>
+        {{ form.firstname.label }}<br/>
+        {{ form.firstname(size=32, value=current_user.firstname) }}<br/>
+    </p>
+    <p>
+        {{ form.lastname.label }}<br/>
+        {{ form.lastname(size=32, value=current_user.lastname) }}<br/>
+    </p>
+    <p>
+        {{ form.email.label }}<br/>
+        {{ form.email(size=32, value=current_user.email) }}<br/>
+        {% for error in form.email.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+
+
+    <!-- Celia added the following for "address" -->
+    <p>
+        {{ form.address.label }}<br/>
+        {{ form.address(size=32, value=current_user.address) }}<br/>
+      </p>
+
+    
+    <p>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </p>
+    {{ form.submit(class_="btn btn-black") }}
+    <a class="btn btn-secondary" href="{{ url_for('users.changepwd') }}" role="button">Change password</a>
+</form>
+
+
+{% endblock %}
