@@ -152,27 +152,30 @@ def balance():
 
 
 ############# Purchase History functions #################
-# ...
-class ReviewForm(FlaskForm):
-    star = IntegerField('Rating', validators=[DataRequired(), NumberRange(min = 1, max = 5, message = 'Rate the seller from 1 to 5 here: ')], default = 5) 
-    content = StringField('Content', validators=[DataRequired()], default = "Review for this seller")
-    upvote = IntegerField('Upvote', validators=[DataRequired(), NumberRange(min = 0, max = 1, message = 'Choose 1 if you want to upvote this seller; else, choose 0. ')], default = 0) 
-    submit = SubmitField('Add Seller Review')
 
-@bp.route('/add_review/<seller_id>', methods=['GET', 'POST'])
-def add_review(seller_id):
-    form = ReviewForm()
-    if form.validate_on_submit():
-        if User.leave_review(current_user.id, seller_id, form.content.data, form.star.data, form.upvote.data):
-            flash('You review for this seller has been added. ')
-            return render_template('add_review.html', title='Add a Seller Review', form=form), {"Refresh": "1; url="+str(url_for('index.index'))}
-    return render_template('add_review.html', title='Add a Seller Review', form=form)
+########### Still need to add a function to add seller review - coming soon... ############################
+# ...
+
+#class SellerReviewForm(FlaskForm):
+#    star = IntegerField('Rating', validators=[DataRequired(), NumberRange(min = 1, max = 5, message = 'Rate the seller from 1 to 5 here: ')], default = 5) 
+#    content = StringField('Content', validators=[DataRequired()], default = "Review for this seller")
+#    upvote = IntegerField('Upvote', validators=[DataRequired(), NumberRange(min = 0, max = 1, message = 'Choose 1 if you want to upvote this seller; else, choose 0. ')], default = 0) 
+#    submit = SubmitField('Add Seller Review')
+
+#@bp.route('/add_review/<seller_id>', methods=['GET', 'POST'])
+#def add_review(seller_id):
+#    form = SellerReviewForm()
+#    if form.validate_on_submit():
+#        if User.add_seller_review(current_user.id, seller_id, form.content.data, form.star.data, form.upvote.data):
+#            flash('You review for this seller has been added. ')
+#            return render_template('add_review.html', title='Add a Seller Review', form=form), {"Refresh": "1; url="+str(url_for('index.index'))}
+#    return render_template('add_review.html', title='Add a Seller Review', form=form)
+
 
 
 
 ########### Still need to add a function for purchase history - coming soon... ############################
 # ...
-
 
 
 
