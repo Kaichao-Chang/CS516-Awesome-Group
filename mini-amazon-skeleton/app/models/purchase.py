@@ -23,18 +23,6 @@ class Purchase:
         id=id)
         return Purchase(*(rows[0])) if rows else None
 
-    # may have bugs here:
-    @staticmethod
-    def add_new_purchases(item, id):
-        app.db.execute('''
-            INSERT INTO Purchases(id, pid, seller_id, quantity)
-            VALUES(:id, :pid, :seller_id, :quantity)
-        ''',
-        id=id,
-        pid=item.pid,
-        seller_id=item.seller_id,
-        quantity=item.quantity
-        )
 
     @staticmethod
     def get_all_by_uid_since(uid, since):
@@ -57,3 +45,17 @@ class Purchase:
                 uid=uid,
                 since=since)
         return [Purchase(*row) for row in rows]
+
+
+    # may have bugs here:
+    @staticmethod
+    def add_new_purchases(item, id):
+        app.db.execute('''
+            INSERT INTO Purchases(id, pid, seller_id, quantity)
+            VALUES(:id, :pid, :seller_id, :quantity)
+        ''',
+        id=id,
+        pid=item.pid,
+        seller_id=item.seller_id,
+        quantity=item.quantity
+        )
