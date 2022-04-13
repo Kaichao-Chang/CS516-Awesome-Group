@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Seller Review Page</h1>
+
+<form action="" method="post">
+  {{ form.hidden_tag() }}
+    <p>
+    Add seller review <br/>
+    {{ add_seller_review }}<br/>
+  </p>
+
+  <p>
+    Add content of your seller review: <br/>
+    {{ form.content(size=32) }}<br/>
+    {% for error in form.content.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+
+  <p>
+    How many stars do you think the seller can be rated: <br/>
+    {{ form.star(size=32) }}<br/>
+    {% for error in form.star.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+
+  <p>
+    Do you want to upvote this seller? <br/>
+    {{ form.upvote(size=32) }}<br/>
+    {% for error in form.upvote.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+
+  <p>
+    
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+  </p>
+  <p>{{ form.submit() }}</p>
+</form>
+
+{% endblock %}

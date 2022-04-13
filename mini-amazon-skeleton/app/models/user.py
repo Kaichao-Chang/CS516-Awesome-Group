@@ -1,31 +1,58 @@
-# https://stackoverflow.com/questions/63231163/what-is-the-usermixin-in-flask
 from flask_login import UserMixin, current_user
-# https://blog.csdn.net/h18208975507/article/details/108106506
 from werkzeug.security import check_password_hash
-# https://werkzeug.palletsprojects.com/en/1.0.x/utils/
 from werkzeug.security import generate_password_hash
-
 from flask import current_app as app
-
 from .. import login
+from datetime import datetime
 
-
-# https://stackoverflow.com/questions/63231163/what-is-the-usermixin-in-flask
-# https://flask-login.readthedocs.io/en/latest/#your-user-class
 class User(UserMixin):
 
-    def __init__(self, id, email, firstname, lastname, address):
+    class Review:
+        def __init__(self, content, star, upvote, customer_id):
+            self.content = content 
+            self.star = star
+            self.upvote = upvote
+            self.customer_id = customer_id
+    
+    @staticmethod
+    def add_seller_review(customer_id, seller_id, content, star, upvote):
+            rows = app.db.execute(
+                """
+                INSERT INTO SellerReviews(customer_id, seller_id, content, star, upvote, created_at) 
+                VALUES(:customer_id, :seller_id, :content, :star, :upvote)
+                ON CONFLICT (customer_id, seller_id) DO UPDATE
+                SET customer_id = :customer_id, seller_id = :seller_id, content = :content, star = :star, upvote = :upvote, created_at = :created_at
+                RETURNING customer_id""", 
+                customer_id=customer_id,
+                seller_id=seller_id, 
+                content=content,
+                star=star,
+                upvote=upvote,
+                created_at=datetime.now())
+            return id if rows else None
+
+
+    def __init__(self, id, email, firstname, lastname, address, is_seller, content=[], star=[], upvote=[], customer_id=[]):
         self.id = id
         self.email = email
         self.firstname = firstname
         self.lastname = lastname
         self.address = address
+        self.is_seller = True if is_seller is not None else False
     
     def buildup_profile(self, email, firstname, lastname, address):
         self.email = email 
         self.firstname = firstname
         self.lastname = lastname
         self.address = address
+        self.rev = []
+
+        if self.is_seller:
+            for a, _ in enumerate(content):
+                if _ is not None:
+                    rev_full = self.Review(content[a], content[a], content[a], content[a])
+                    self.rev.append(rev_full)
+
 
     # requirement 1: an existing user can log in using email and password.
         # if the password and email are correct, this function will return the users' information
@@ -33,7 +60,7 @@ class User(UserMixin):
     def get_by_auth(email, password):     
         rows = app.db.execute(
             """
-            select password, id, email, firstname, lastname, address
+            select password, id, email, firstname, lastname, address, False AS is_seller
             from Users
             where email = :email""", 
             email=email)
@@ -121,9 +148,16 @@ class User(UserMixin):
     @login.user_loader
     def get(id):
         rows = app.db.execute("""
-        SELECT id, email, firstname, lastname, address
-        FROM Users
-        WHERE id = :id""",
+        SELECT u.id, email, firstname, lastname, address,
+        CASE WHEN u.id in (SELECT uid FROM Sellers) THEN true 
+        ELSE false
+        END AS is_seller,
+        ARRAY_AGG(content), ARRAY_AGG(star), ARRAY_AGG(upvote)
+        FROM Users AS u
+        LEFT JOIN SellerReviews AS s
+        ON u.id = s.seller_id
+        WHERE u.id = :id
+        GROUP BY u.id, email, firstname, lastname, address, s.seller_id """,
         id=id)
         return User(*(rows[0])) if rows else None
 
@@ -179,25 +213,12 @@ class User(UserMixin):
         id=id)
         return rows[0][0]
 
-#
-#    # initialize balance for all new registered users as 100 (like a coupon).
-#    @staticmethod
-#    def initial_balance(id):
-#        rows = app.db.execute(
-#            """
-#            INSERT INTO Users(id, balance)
-#            VALUES(:id, :init_balance)
-#            RETURNING id""",
-#            id = id, 
-#            init_balance = 100) # we set initial balance as 100 in this case, for all new registered users.
-#        return User.get_balance(rows[0][0])
-
-
     # requirement 3: Each account is associated with a balance. 
         # It starts out as $0, but can be topped up by the user. 
         # The user can also withdraw up to the full balance. 
     @staticmethod
     def update_balance(id, topup, withdraw):
+        # In this case, the balance can be negative values (it's similar as credit card debit - if it'negative, you owe our company money)
         try:
             rows = app.db.execute(
             """

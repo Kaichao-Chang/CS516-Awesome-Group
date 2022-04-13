@@ -1,14 +1,12 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<h1>User Profile</h1>
+<h1>Pulic Profile of The User</h1>
 <h2>The followings are this user's basic information:</h2>
-<p><b>id: </b>{{current_user.id}} <br> <b>first_name:</b> {{current_user.firstname}}&nbsp;{{current_user.lastname}}</p>
+<p><b>id: </b>{{user.id}} <br> <b>first_name:</b> {{user.firstname}}&nbsp;{{user.lastname}}</p>
     <!-- or user -->
 
 
-<!-- I will add another case when the user is a seller ... 
 {% if user.is_seller %}
 <b>Email:  </b><u>{{user.email}}</u><br/>
 <b>Address:  </b><u>{{user.address}}</u><br/>
@@ -17,24 +15,25 @@
     <br/><br/><h2>Reviews:</h2><br/>
     
     <ol>
-    {% for review in user.reviews %}
+    {% for review in user.rev %}
     <li>{% for star in range(5) %}
-            {% if star+1 <= review.rating %}
+            {% if star+1 <= review.star %}
                 &#9733;
             {% endif %}
-            {% if star+1 > review.rating %}
+            {% if star+1 > review.star %}
                 &#9734;
             {% endif %}
         {% endfor %}
         </br>
-        <b><u>{{review.title}}</u></b> </br>
-        {{review.body}} </br>
-        <a href="{{ url_for('users.user_public_view', id=review.uid) }}">See who give this rating</a>
+        <b><u>{{review.content}}</u></b> </br>
+        {{review.upvote}} </br>
+        <a href="{{ url_for('users.public_view_user', id=review.customer_id) }}">See which user rates this product:</a>
         
         <br/></br>
     {% endfor %}
     </ol>
 {% endif %}
--->
+
+
 
 {% endblock %}

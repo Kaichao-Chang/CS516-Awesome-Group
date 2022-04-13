@@ -132,16 +132,61 @@ def password():
             return redirect(url_for('users.password'))
     return render_template('change_password.html', title='Password', form=form)
         
-       
 
-############# Balance functions to be added in the following #################
-#......
+############# Balance functions #################
+class BalanceForm(FlaskForm):
+    topup = DecimalField('deposit', validators=[], default=0)
+    withdraw = DecimalField('withdraw', validators=[], default=0)
+    submit = SubmitField('Update Your Balance')
+
+@bp.route('/balance', methods=['GET', 'POST'])
+def balance():
+    form = BalanceForm()
+    if form.validate_on_submit():
+        if User.update_balance(current_user.id, form.topup.data, form.withdraw.data):
+            flash('We have updated your balance; please check it here.')
+            return render_template('balance.html', title='Balance', form=form, your_balance=User.get_balance(current_user.id)), {"Refresh": "1; url="+str(url_for('index.index'))}
+        else:
+            flash('Oops! Insufficient balance to do this withdrawal :(')            
+    return render_template('balance.html', title='Balance', form=form, your_balance=User.get_balance(current_user.id))
+
+
+############# Purchase History functions #################
+# ...
+class ReviewForm(FlaskForm):
+    star = IntegerField('Rating', validators=[DataRequired(), NumberRange(min = 1, max = 5, message = 'Rate the seller from 1 to 5 here: ')], default = 5) 
+    content = StringField('Content', validators=[DataRequired()], default = "Review for this seller")
+    upvote = IntegerField('Upvote', validators=[DataRequired(), NumberRange(min = 0, max = 1, message = 'Choose 1 if you want to upvote this seller; else, choose 0. ')], default = 0) 
+    submit = SubmitField('Add Seller Review')
+
+@bp.route('/add_review/<seller_id>', methods=['GET', 'POST'])
+def add_review(seller_id):
+    form = ReviewForm()
+    if form.validate_on_submit():
+        if User.leave_review(current_user.id, seller_id, form.content.data, form.star.data, form.upvote.data):
+            flash('You review for this seller has been added. ')
+            return render_template('add_review.html', title='Add a Seller Review', form=form), {"Refresh": "1; url="+str(url_for('index.index'))}
+    return render_template('add_review.html', title='Add a Seller Review', form=form)
 
 
 
-@bp.route('/profile', methods=['GET', 'POST'])
-def profile():
-    return render_template("public_view_user.html")
+########### Still need to add a function for purchase history - coming soon... ############################
+# ...
+
+
+
+
+
+
+
+
+
+############# Public View of User functions #################
+@bp.route('/public_view_user/<int:id>')
+def public_view_user(id):
+    user = User.get(id)
+    return render_template('public_view_user.html', title='Public View of This User', user=user)
+
 
 
 ############################### Celia added some functions for Part 1 above this line #################################
