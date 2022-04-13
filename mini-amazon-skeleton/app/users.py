@@ -21,6 +21,7 @@ from .models.purchase import Purchase
 from .models.seller import Seller
 from .models.product import Product, Product2
 from .models.seller_purchase import Seller_purchase
+from .models.cart import Cart
 
 import itertools
 import datetime
@@ -364,3 +365,37 @@ def fulfilled(id: int):
             return redirect(url_for('users.fulfilled', id = id))
     return render_template('order_fulfilled.html', 
         title='order_fulfilled', form=form, avail_history=avail_history)
+
+@bp.route('/cart/', methods = ['GET', 'POST'])
+def cart():
+    if current_user.is_authenticated:
+        cart = Cart.get_cart(current_user.id)
+    else:
+        cart = None
+    return render_template('cart.html', cart = cart)
+
+class CartChangeForm(FlaskForm):
+    quantity = IntegerField('Number of Items', validators=[DataRequired(), NumberRange(min=1, message='Entry must be positive!')])
+    submit = SubmitField('Change')
+
+@bp.route('/addToCart/<int:pid>', methods = ['GET', 'POST'])
+def addToCart(pid: int):
+    if current_user.is_authenticated:
+        Cart.add_cart(current_user.id, pid)
+        return redirect(url_for('users.changeCartQuantity', form=CartChangeForm(), pid=pid))
+    else:
+        return redirect(url_for('users.login'))
+    
+@bp.route('/delFromCart/<int:pid>', methods = ['GET', 'POST'])
+def delFromCart(pid: int):
+    Cart.delete_cart(current_user.id, pid)
+    cart = Cart.get_cart(current_user.id)
+    return render_template('cart.html', cart = cart)
+
+@bp.route('/changeCartQuantity/<int:pid>', methods = ['GET', 'POST'])
+def changeCartQuantity(pid: int):
+    form = CartChangeForm()
+    if form.validate_on_submit():
+        Cart.change_cart(current_user.id, pid, quantity=form.quantity.data)
+        return redirect(url_for('users.cart'))
+    return render_template('cart_quantity.html', form=CartChangeForm(), pid=pid)
