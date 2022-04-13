@@ -1,6 +1,7 @@
 from email import charset
 from flask import current_app as app
-
+# TO DO:
+# check file name duplicate
 
 class Product:
     def __init__(self,
@@ -228,13 +229,16 @@ class Product2:
 
 
     @staticmethod
-    def post_item(name, price, uid, number):
+    def post_item(name, price, cate, descr, img, uid, number):
         app.db.execute(
-            "INSERT INTO Products(name, price, available, seller_id, inv)"
-            "VALUES(:name, :price, TRUE, :uid, :number)"
+            "INSERT INTO Products(name, price,cate, descr, img, available, seller_id, inv)"
+            "VALUES(:name, :price, :cate, :descr, :img, TRUE, :uid, :number)"
             "RETURNING id",
             name=name,
             price=price,
+            cate=cate,
+            descr=descr,
+            img=img,
             uid=uid,
             number=number)
 
@@ -302,4 +306,14 @@ class Product2:
             "WHERE id = :id",
         id = id,
         price = price
+        )
+
+    @staticmethod
+    def change_img(id, img):
+        app.db.execute(
+            "UPDATE Products "
+            "SET img = :img "
+            "WHERE id = :id",
+        id = id,
+        img = img
         )

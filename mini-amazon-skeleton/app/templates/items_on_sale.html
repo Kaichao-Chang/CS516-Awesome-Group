@@ -21,7 +21,7 @@
     {% for sell_history in avail_history%}
       <tr>
         <th scope="row">{{sell_history.name}}<a href="{{ url_for('users.change_name', id=sell_history.id) }}"> Alter </a></th>
-        <td><img src="{{ url_for('static', filename='/pic/' + sell_history.img) }}" /></td>
+        <td><img src="{{ url_for('static', filename='/pic/' + sell_history.img) }}" /><a href="{{ url_for('users.change_img', id=sell_history.id) }}"> Alter</td>
         <td>{{sell_history.descr}}<a href="{{ url_for('users.change_descr', id=sell_history.id) }}"> Alter</td>
         <td>{{sell_history.cate}}<a href="{{ url_for('users.change_cate', id=sell_history.id) }}"> Alter</td>
         <td>{{sell_history.price}}<a href="{{ url_for('users.change_price', id=sell_history.id) }}"> Alter</td>

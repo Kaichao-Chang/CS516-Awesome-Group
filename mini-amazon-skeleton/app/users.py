@@ -1,14 +1,18 @@
 from cgi import print_exception
+from email.message import Message
 from operator import is_
-from unicodedata import name
+from pydoc import describe
+from unicodedata import category, name
 # from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask import Blueprint, flash, redirect, render_template, request, url_for, flash, Markup, current_app as app, g
 from flask_login import current_user, login_user, logout_user
 from flask_wtf import FlaskForm
 from werkzeug.urls import url_parse
 from werkzeug.datastructures import MultiDict
-from wtforms import BooleanField, PasswordField, StringField, SubmitField, DecimalField, IntegerField, SelectField, FloatField
-from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, NumberRange, AnyOf
+from wtforms import BooleanField, PasswordField, StringField, SubmitField, DecimalField, IntegerField, SelectField, FloatField, FileField
+from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, NumberRange, AnyOf, Length
+from flask_wtf.file import FileField, FileRequired, FileAllowed
+from werkzeug.utils import secure_filename
 from wtforms.widgets.core import HTMLString, html_params, escape
 from itsdangerous import URLSafeTimedSerializer
 
@@ -20,6 +24,7 @@ from .models.seller_purchase import Seller_purchase
 
 import itertools
 import datetime
+import os
 
 bp = Blueprint('users', __name__)
 
@@ -172,8 +177,11 @@ def seller_register():
 
 class SaleForm(FlaskForm):
     name = StringField('Product Name', validators=[DataRequired()])
-    price = DecimalField('Product Price', validators=[DataRequired()])
-    number = IntegerField('Number of Items', validators=[DataRequired()])
+    price = price = FloatField('Price', validators=[DataRequired(), NumberRange(min=0, message='Entry must be non-negative!')])
+    cate = cate = StringField('Categroy (A, B, C)', validators=[AnyOf(values=['A', 'B','C'])])
+    descr = StringField('Description', validators=[DataRequired() , Length(max = 255, message="Do not exceed 255 character")])
+    file = FileField('Image',validators=[FileRequired(message="You must up load an image."), FileAllowed(['jpg', 'png'], 'Images only!')])
+    number = IntegerField('Number of Items', validators=[DataRequired(), NumberRange(min=0, message='Entry must be non-negative!')])
     submit = SubmitField('Post')
 
 @bp.route('/seller_post', methods=['GET', 'POST'])
@@ -181,8 +189,16 @@ def seller_post():
     form = SaleForm()
     is_seller = Seller.is_seller(current_user.id)
     if form.validate_on_submit():
-        Product.post_item(form.name.data,
+        f = form.file.data
+        filename = secure_filename(f.filename)
+        f.save(os.path.join(
+            app.instance_path,'../app/static/pic', filename
+        ))
+        Product2.post_item(form.name.data,
                          form.price.data,
+                         form.cate.data,
+                         form.descr.data,
+                         filename,
                          current_user.id,
                          form.number.data)
         return redirect(url_for('index.index'))        
@@ -219,7 +235,7 @@ def change_inv(id: int):
     return render_template('change_inv.html', title='change_inv', form=form)
 
 class NameChangeForm(FlaskForm):
-    name = StringField('New Name', validators=[DataRequired()])
+    name = StringField('New Name', validators=[DataRequired(), Length(max = 255, message="Do not exceed 255 character")])
     submit = SubmitField('Post')
 
 @bp.route('/change_name/<int:id>', methods = ['GET', 'POST'])
@@ -231,7 +247,7 @@ def change_name(id: int):
     return render_template('change_name.html', title='change_name', form=form)
 
 class DescrChangeForm(FlaskForm):
-    descr = StringField('New Description', validators=[DataRequired()])
+    descr = StringField('New Description', validators=[DataRequired() , Length(max = 255, message="Do not exceed 255 character")])
     submit = SubmitField('Post')
 
 @bp.route('/change_descr/<int:id>', methods = ['GET', 'POST'])
@@ -265,6 +281,23 @@ def change_price(id: int):
         Product2.change_price(id, form.price.data)
         return redirect(url_for('users.items_on_sale'))        
     return render_template('change_price.html', title='change_price', form=form)
+
+class ImgChangeForm(FlaskForm):
+    file = FileField(validators=[FileRequired(message="You must up load an image."), FileAllowed(['jpg', 'png'], 'Images only!')])
+    submit = SubmitField('Upload')
+
+@bp.route('/change_img/<int:id>', methods = ['GET', 'POST'])
+def change_img(id: int):
+    form = ImgChangeForm()
+    if form.validate_on_submit():
+        f = form.file.data
+        filename = secure_filename(f.filename)
+        f.save(os.path.join(
+            app.instance_path,'../app/static/pic', filename
+        ))
+        Product2.change_img(id, filename)
+        return redirect(url_for('users.items_on_sale'))        
+    return render_template('change_img.html', title='change_img', form=form)
 
 class ProductRemoveForm(FlaskForm):
     ans = StringField('Are you sure you want to delete this product from selling? (input "d" in the block below to delete)', validators=[DataRequired()])
