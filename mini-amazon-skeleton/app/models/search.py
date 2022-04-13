@@ -8,8 +8,10 @@ class Search():
         @staticmethod
         def search_product(search_msg, cate, order):
                 sql = """
-SELECT *
-FROM Products """
+SELECT Products.*, CONCAT(Users.firstname, ' ', Users.lastname) as seller_name
+FROM Products 
+LEFT JOIN Users ON Products.seller_id = Users.id
+"""
                
                 Search.keyword = search_msg
                 Search.order = order

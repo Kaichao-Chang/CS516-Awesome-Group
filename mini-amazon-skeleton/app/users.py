@@ -7,15 +7,15 @@ from flask_login import current_user, login_user, logout_user
 from flask_wtf import FlaskForm
 from werkzeug.urls import url_parse
 from werkzeug.datastructures import MultiDict
-from wtforms import BooleanField, PasswordField, StringField, SubmitField, DecimalField, IntegerField, SelectField
-from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, NumberRange
+from wtforms import BooleanField, PasswordField, StringField, SubmitField, DecimalField, IntegerField, SelectField, FloatField
+from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, NumberRange, AnyOf
 from wtforms.widgets.core import HTMLString, html_params, escape
 from itsdangerous import URLSafeTimedSerializer
 
 from .models.user import User
 from .models.purchase import Purchase
 from .models.seller import Seller
-from .models.product import Product
+from .models.product import Product, Product2
 from .models.seller_purchase import Seller_purchase
 
 import itertools
@@ -201,13 +201,13 @@ def selling_history():
 def items_on_sale():
     is_seller = Seller.is_seller(current_user.id)
     if current_user.is_authenticated:
-        avail_history = Product.items_on_sale(current_user.id)
+        avail_history = Product2.items_on_sale(current_user.id)
     else:
         avail_history = None
     return render_template('items_on_sale.html', avail_history = avail_history, is_seller = is_seller)
 
 class InvChangeForm(FlaskForm):
-    inv = IntegerField('Number of Items', validators=[DataRequired()])
+    inv = IntegerField('Number of Items', validators=[DataRequired(), NumberRange(min=0, message='Entry must be non-negative!')])
     submit = SubmitField('Post')
 
 @bp.route('/change_inv/<int:id>', methods = ['GET', 'POST'])
@@ -217,6 +217,54 @@ def change_inv(id: int):
         Product.change_inv(id, form.inv.data)
         return redirect(url_for('users.items_on_sale'))        
     return render_template('change_inv.html', title='change_inv', form=form)
+
+class NameChangeForm(FlaskForm):
+    name = StringField('New Name', validators=[DataRequired()])
+    submit = SubmitField('Post')
+
+@bp.route('/change_name/<int:id>', methods = ['GET', 'POST'])
+def change_name(id: int):
+    form = NameChangeForm()
+    if form.validate_on_submit():
+        Product2.change_name(id, form.name.data)
+        return redirect(url_for('users.items_on_sale'))        
+    return render_template('change_name.html', title='change_name', form=form)
+
+class DescrChangeForm(FlaskForm):
+    descr = StringField('New Description', validators=[DataRequired()])
+    submit = SubmitField('Post')
+
+@bp.route('/change_descr/<int:id>', methods = ['GET', 'POST'])
+def change_descr(id: int):
+    form = DescrChangeForm()
+    if form.validate_on_submit():
+        Product2.change_descr(id, form.descr.data)
+        return redirect(url_for('users.items_on_sale'))        
+    return render_template('change_descr.html', title='change_descr', form=form)
+
+class CateChangeForm(FlaskForm):
+    cate = StringField('New Categroy (A, B, C)', validators=[AnyOf(values=['A', 'B','C'])])
+    submit = SubmitField('Post')
+
+@bp.route('/change_cate/<int:id>', methods = ['GET', 'POST'])
+def change_cate(id: int):
+    form = CateChangeForm()
+    if form.validate_on_submit():
+        Product2.change_cate(id, form.cate.data)
+        return redirect(url_for('users.items_on_sale'))        
+    return render_template('change_cate.html', title='change_cate', form=form)
+
+class PriceChangeForm(FlaskForm):
+    price = FloatField('New Price', validators=[DataRequired(), NumberRange(min=0, message='Entry must be non-negative!')])
+    submit = SubmitField('Post')
+
+@bp.route('/change_price/<int:id>', methods = ['GET', 'POST'])
+def change_price(id: int):
+    form = PriceChangeForm()
+    if form.validate_on_submit():
+        Product2.change_price(id, form.price.data)
+        return redirect(url_for('users.items_on_sale'))        
+    return render_template('change_price.html', title='change_price', form=form)
 
 class ProductRemoveForm(FlaskForm):
     ans = StringField('Are you sure you want to delete this product from selling? (input "d" in the block below to delete)', validators=[DataRequired()])
