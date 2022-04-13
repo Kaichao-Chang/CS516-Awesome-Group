@@ -1,25 +1,31 @@
 from cgi import print_exception
+from email.message import Message
 from operator import is_
-from unicodedata import name
+from pydoc import describe
+from unicodedata import category, name
 # from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask import Blueprint, flash, redirect, render_template, request, url_for, flash, Markup, current_app as app, g
 from flask_login import current_user, login_user, logout_user
 from flask_wtf import FlaskForm
 from werkzeug.urls import url_parse
 from werkzeug.datastructures import MultiDict
-from wtforms import BooleanField, PasswordField, StringField, SubmitField, DecimalField, IntegerField, SelectField
-from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, NumberRange
+from wtforms import BooleanField, PasswordField, StringField, SubmitField, DecimalField, IntegerField, SelectField, FloatField, FileField
+from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, NumberRange, AnyOf, Length
+from flask_wtf.file import FileField, FileRequired, FileAllowed
+from werkzeug.utils import secure_filename
 from wtforms.widgets.core import HTMLString, html_params, escape
 from itsdangerous import URLSafeTimedSerializer
 
 from .models.user import User
 from .models.purchase import Purchase
 from .models.seller import Seller
-from .models.product import Product
+from .models.product import Product, Product2
 from .models.seller_purchase import Seller_purchase
+from .models.cart import Cart
 
 import itertools
 import datetime
+import os
 
 bp = Blueprint('users', __name__)
 
@@ -220,8 +226,11 @@ def seller_register():
 
 class SaleForm(FlaskForm):
     name = StringField('Product Name', validators=[DataRequired()])
-    price = DecimalField('Product Price', validators=[DataRequired()])
-    number = IntegerField('Number of Items', validators=[DataRequired()])
+    price = price = FloatField('Price', validators=[DataRequired(), NumberRange(min=0, message='Entry must be non-negative!')])
+    cate = cate = StringField('Categroy (A, B, C)', validators=[AnyOf(values=['A', 'B','C'])])
+    descr = StringField('Description', validators=[DataRequired() , Length(max = 255, message="Do not exceed 255 character")])
+    file = FileField('Image',validators=[FileRequired(message="You must up load an image."), FileAllowed(['jpg', 'png'], 'Images only!')])
+    number = IntegerField('Number of Items', validators=[DataRequired(), NumberRange(min=0, message='Entry must be non-negative!')])
     submit = SubmitField('Post')
 
 @bp.route('/seller_post', methods=['GET', 'POST'])
@@ -229,8 +238,16 @@ def seller_post():
     form = SaleForm()
     is_seller = Seller.is_seller(current_user.id)
     if form.validate_on_submit():
-        Product.post_item(form.name.data,
+        f = form.file.data
+        filename = secure_filename(f.filename)
+        f.save(os.path.join(
+            app.instance_path,'../app/static/pic', filename
+        ))
+        Product2.post_item(form.name.data,
                          form.price.data,
+                         form.cate.data,
+                         form.descr.data,
+                         filename,
                          current_user.id,
                          form.number.data)
         return redirect(url_for('index.index'))        
@@ -249,13 +266,13 @@ def selling_history():
 def items_on_sale():
     is_seller = Seller.is_seller(current_user.id)
     if current_user.is_authenticated:
-        avail_history = Product.items_on_sale(current_user.id)
+        avail_history = Product2.items_on_sale(current_user.id)
     else:
         avail_history = None
     return render_template('items_on_sale.html', avail_history = avail_history, is_seller = is_seller)
 
 class InvChangeForm(FlaskForm):
-    inv = IntegerField('Number of Items', validators=[DataRequired()])
+    inv = IntegerField('Number of Items', validators=[DataRequired(), NumberRange(min=0, message='Entry must be non-negative!')])
     submit = SubmitField('Post')
 
 @bp.route('/change_inv/<int:id>', methods = ['GET', 'POST'])
@@ -265,6 +282,71 @@ def change_inv(id: int):
         Product.change_inv(id, form.inv.data)
         return redirect(url_for('users.items_on_sale'))        
     return render_template('change_inv.html', title='change_inv', form=form)
+
+class NameChangeForm(FlaskForm):
+    name = StringField('New Name', validators=[DataRequired(), Length(max = 255, message="Do not exceed 255 character")])
+    submit = SubmitField('Post')
+
+@bp.route('/change_name/<int:id>', methods = ['GET', 'POST'])
+def change_name(id: int):
+    form = NameChangeForm()
+    if form.validate_on_submit():
+        Product2.change_name(id, form.name.data)
+        return redirect(url_for('users.items_on_sale'))        
+    return render_template('change_name.html', title='change_name', form=form)
+
+class DescrChangeForm(FlaskForm):
+    descr = StringField('New Description', validators=[DataRequired() , Length(max = 255, message="Do not exceed 255 character")])
+    submit = SubmitField('Post')
+
+@bp.route('/change_descr/<int:id>', methods = ['GET', 'POST'])
+def change_descr(id: int):
+    form = DescrChangeForm()
+    if form.validate_on_submit():
+        Product2.change_descr(id, form.descr.data)
+        return redirect(url_for('users.items_on_sale'))        
+    return render_template('change_descr.html', title='change_descr', form=form)
+
+class CateChangeForm(FlaskForm):
+    cate = StringField('New Categroy (A, B, C)', validators=[AnyOf(values=['A', 'B','C'])])
+    submit = SubmitField('Post')
+
+@bp.route('/change_cate/<int:id>', methods = ['GET', 'POST'])
+def change_cate(id: int):
+    form = CateChangeForm()
+    if form.validate_on_submit():
+        Product2.change_cate(id, form.cate.data)
+        return redirect(url_for('users.items_on_sale'))        
+    return render_template('change_cate.html', title='change_cate', form=form)
+
+class PriceChangeForm(FlaskForm):
+    price = FloatField('New Price', validators=[DataRequired(), NumberRange(min=0, message='Entry must be non-negative!')])
+    submit = SubmitField('Post')
+
+@bp.route('/change_price/<int:id>', methods = ['GET', 'POST'])
+def change_price(id: int):
+    form = PriceChangeForm()
+    if form.validate_on_submit():
+        Product2.change_price(id, form.price.data)
+        return redirect(url_for('users.items_on_sale'))        
+    return render_template('change_price.html', title='change_price', form=form)
+
+class ImgChangeForm(FlaskForm):
+    file = FileField(validators=[FileRequired(message="You must up load an image."), FileAllowed(['jpg', 'png'], 'Images only!')])
+    submit = SubmitField('Upload')
+
+@bp.route('/change_img/<int:id>', methods = ['GET', 'POST'])
+def change_img(id: int):
+    form = ImgChangeForm()
+    if form.validate_on_submit():
+        f = form.file.data
+        filename = secure_filename(f.filename)
+        f.save(os.path.join(
+            app.instance_path,'../app/static/pic', filename
+        ))
+        Product2.change_img(id, filename)
+        return redirect(url_for('users.items_on_sale'))        
+    return render_template('change_img.html', title='change_img', form=form)
 
 class ProductRemoveForm(FlaskForm):
     ans = StringField('Are you sure you want to delete this product from selling? (input "d" in the block below to delete)', validators=[DataRequired()])
@@ -331,3 +413,37 @@ def fulfilled(id: int):
             return redirect(url_for('users.fulfilled', id = id))
     return render_template('order_fulfilled.html', 
         title='order_fulfilled', form=form, avail_history=avail_history)
+
+@bp.route('/cart/', methods = ['GET', 'POST'])
+def cart():
+    if current_user.is_authenticated:
+        cart = Cart.get_cart(current_user.id)
+    else:
+        cart = None
+    return render_template('cart.html', cart = cart)
+
+class CartChangeForm(FlaskForm):
+    quantity = IntegerField('Number of Items', validators=[DataRequired(), NumberRange(min=1, message='Entry must be positive!')])
+    submit = SubmitField('Change')
+
+@bp.route('/addToCart/<int:pid>', methods = ['GET', 'POST'])
+def addToCart(pid: int):
+    if current_user.is_authenticated:
+        Cart.add_cart(current_user.id, pid)
+        return redirect(url_for('users.changeCartQuantity', form=CartChangeForm(), pid=pid))
+    else:
+        return redirect(url_for('users.login'))
+    
+@bp.route('/delFromCart/<int:pid>', methods = ['GET', 'POST'])
+def delFromCart(pid: int):
+    Cart.delete_cart(current_user.id, pid)
+    cart = Cart.get_cart(current_user.id)
+    return render_template('cart.html', cart = cart)
+
+@bp.route('/changeCartQuantity/<int:pid>', methods = ['GET', 'POST'])
+def changeCartQuantity(pid: int):
+    form = CartChangeForm()
+    if form.validate_on_submit():
+        Cart.change_cart(current_user.id, pid, quantity=form.quantity.data)
+        return redirect(url_for('users.cart'))
+    return render_template('cart_quantity.html', form=CartChangeForm(), pid=pid)

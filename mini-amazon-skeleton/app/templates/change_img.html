@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Change Image for Items</h1>
+<title>Upload new File</title>
+<form method="post" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  <p>
+    {{ form.file }}
+    {% for error in form.file.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+  </p>
+  <p>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+  </p>
+  <p>{{ form.submit() }}</p>
+  <a class="btn btn-secondary" href="{{ url_for('index.index') }}" role="button">Back to main page</a>
+</form>
+
+{% endblock %}
+

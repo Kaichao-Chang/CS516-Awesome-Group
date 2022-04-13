@@ -21,7 +21,7 @@
       <td>{{product.seller_name}} </td>
       <td>{{product.price}}</td>
       <td>{{product.inv}}</td>
-      <td>add to cart</td>
+      <td><a href="{{ url_for('users.addToCart', pid=product.id) }}">add to cart</a></td>
     
     </tr>
     {% endfor %}
