@@ -4,36 +4,35 @@
 <h1>Pulic Profile of The User</h1>
 <h2>The followings are this user's basic information:</h2>
 <p><b>ID: </b>{{user.id}} <br> <b>Your name:</b> {{user.firstname}}&nbsp;{{user.lastname}}</p>
-    <!-- or user -->
 
-
+<!-- 
 {% if user.is_seller %}
 <b>Email:  </b><u>{{user.email}}</u><br/>
 <b>Address:  </b><u>{{user.address}}</u><br/>
     
     
-    <br/><br/><h2>Reviews:</h2><br/>
+    <br/><br/><h2>If this user is a seller, show seller reviews this user received:</h2><br/>
     
     <ol>
-    {% for review in user.rev %}
-    <li>{% for star in range(5) %}
-            {% if star+1 <= review.star %}
-                &#9733;
-            {% endif %}
-            {% if star+1 > review.star %}
-                &#9734;
-            {% endif %}
+        {% for review in user.reviews %}
+        <li>{% for star in range(5) %}
+                {% if star+1 <= review.star %}
+                    &#9733;
+                {% endif %}
+                {% if star+1 > review.star %}
+                    &#9734;
+                {% endif %}
+            {% endfor %}
+            </br>
+            <b><u>{{review.content}}</u></b> </br>
+            <a href="{{ url_for('users.public_view_user', id=review.customer_id) }}">See which user rates this product:</a>
+            
+            <br/></br>
         {% endfor %}
-        </br>
-        <b><u>{{review.content}}</u></b> </br>
-        {{review.upvote}} </br>
-        <a href="{{ url_for('users.public_view_user', id=review.customer_id) }}">See which user rates this product:</a>
-        
-        <br/></br>
-    {% endfor %}
-    </ol>
+        </ol>
+    
 {% endif %}
-
+ -->
 
 
 {% endblock %}
