@@ -33,16 +33,15 @@ class Purchase:
             quantity_check = "HAVING SUM(total_quantity) = %d" % quantity
         
         query = "WITH subquery AS (" \
-                    "SELECT id, p.uid, p.seller_id, CONCAT(u.firstname, ' ', u.lastname) AS sname, SUM(prod.price*p.quantity) AS total_price, SUM(p.quantity) AS total_quantity, p.fulfill_by_seller, p.time_purchased " \
+                    "SELECT p.id, p.uid, p.seller_id, CONCAT(u.firstname, ' ', u.lastname) AS sname, SUM(prod.price*p.quantity) AS total_price, SUM(p.quantity) AS total_quantity, p.fulfill_by_seller, p.time_purchased " \
                     "FROM Purchases AS p, Users AS u, Products AS prod " \
                     "WHERE p.uid = :uid " \
-                        "AND o.id = p.id " \
-                        "AND u.id = p.seller_id " \
-                        "AND prod.id = p.pid" \
+                        "AND p.seller_id = u.id " \
+                        "AND p.pid = prod.id " \
                         "AND ( ( p.time_purchased >= :start_date AND p.time_purchased <= :end_date ) OR p.time_purchased IS NULL )" \
                         "AND ( ( LOWER(u.firstname) LIKE :firstname AND LOWER(u.lastname) LIKE :lastname ) OR ( LOWER(u.firstname) LIKE :lastname AND LOWER(u.lastname) LIKE :firstname ) ) "\
-                "GROUP BY id, p.uid, p.seller_id, u.firstname, u.lastname, p.fulfill_by_seller, p.time_purchased ) "\
-                "SELECT id, uid, ARRAY_AGG(p.seller_id) AS sidList, ARRAY_AGG(sname) AS sellersList, SUM(total_price) AS total_price_all_sellers, SUM(total_quantity) AS total_quantity_all_sellers, fulfill_by_seller, time_purchased "\
+                "GROUP BY p.id, p.uid, p.seller_id, u.firstname, u.lastname, p.fulfill_by_seller, p.time_purchased ) "\
+                "SELECT id, uid, ARRAY_AGG(seller_id) AS sidList, ARRAY_AGG(sname) AS sellersList, SUM(total_price) AS total_price_all_sellers, SUM(total_quantity) AS total_quantity_all_sellers, fulfill_by_seller, time_purchased "\
                 "FROM subquery " \
                 "GROUP BY id, uid, fulfill_by_seller, time_purchased "\
                 "%s " % (quantity_check) + \

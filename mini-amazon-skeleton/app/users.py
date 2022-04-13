@@ -213,7 +213,8 @@ def purchase_history():
         if request.method == "GET":
             ancient = datetime.datetime(1980, 9, 14, 0, 0, 0)
             now = datetime.datetime.now()
-            purchases = Purchase.get_all_by_uid_since(current_user.id, ancient, now, quantity, seller_firstname, seller_lastname)
+            #now = datetime.datetime(2030, 9, 14, 0, 0, 0)
+            purchases = Purchase.get_all_by_uid_since(current_user.id, ancient, now)
                 
             potential_sellers = []
             for p in purchases:

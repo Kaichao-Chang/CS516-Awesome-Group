@@ -1,13 +1,5 @@
-{% extends "base.html" %}
-
-{% block content %}
 
 {% if current_user.is_authenticated %}
-<head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"> </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"> </script>
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css" rel="stylesheet" type="text/css" />
-</head>
 
 <h1>Your Current Orders:</h1>
 
@@ -21,7 +13,9 @@
     <input type="date" name="start_date" value={{since}}>
     to
     <input type="date" name="end_date" value={{to}}>
-    <script>
+    
+    
+    <!-- <script>
     $( function() {
         var availableSellers = [
             {% for s in potential_sellers %}
@@ -41,7 +35,7 @@
         });
 
     });
-    </script>
+    </script> -->
     
 
     <input type = "submit" value = "submit" />
@@ -95,5 +89,3 @@
   </tbody>
 </table>
 {% endif %}
-
-{% endblock %}
