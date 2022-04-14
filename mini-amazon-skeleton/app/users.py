@@ -3,7 +3,6 @@ from email.message import Message
 from operator import is_
 from pydoc import describe
 from unicodedata import category, name
-# from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask import Blueprint, flash, redirect, render_template, request, url_for, flash, Markup, current_app as app, g
 from flask_login import current_user, login_user, logout_user
 from flask_wtf import FlaskForm
@@ -170,13 +169,6 @@ def balance():
 ########### Still need to add a function to add seller review - coming soon... ############################
 # ...
 
-#class SellerReviewForm(FlaskForm):
-#    star = IntegerField('Rating', validators=[DataRequired(), NumberRange(min = 1, max = 5, message = 'Rate the seller from 1 to 5 here: ')], default = 5) 
-#    content = StringField('Content', validators=[DataRequired()], default = "Review for this seller")
-#    upvote = IntegerField('Upvote', validators=[DataRequired(), NumberRange(min = 0, max = 1, message = 'Choose 1 if you want to upvote this seller; else, choose 0. ')], default = 0) 
-#    submit = SubmitField('Add Seller Review')
-
-
 ########### Still need to add a function for purchase history - coming soon... ############################
 
 def generateDateRange(date1, date2):
@@ -205,83 +197,89 @@ def generateDateRange(date1, date2):
 def purchase_history():
     if Seller.is_seller(current_user.id):
         current_user.is_current_seller = True
+
+    if current_user.is_authenticated:
         
-    if request.method == "GET":
-        ancient = datetime.datetime(1980, 9, 14, 0, 0, 0)
-        now = datetime.datetime.now()
-        #now = datetime.datetime(2030, 9, 14, 0, 0, 0)
-        purchases = Purchase.get_all_by_uid_since(current_user.id, ancient, now)
+        if request.method == "GET":
+            ancient = datetime.datetime(1980, 9, 14, 0, 0, 0)
+            now = datetime.datetime.now()
+            purchases = Purchase.get_all_by_uid_since(current_user.id, ancient, now)
+                
+            potential_sellers = []
+            for p in purchases:
+                for s in p.sname:
+                    if s not in potential_sellers:
+                        potential_sellers.append(s)
             
-        potential_sellers = []
-        for p in purchases:
-            for s in p.sname:
-                if s not in potential_sellers:
-                    potential_sellers.append(s)
-        
-        potential_quantity = list(set([ p.quantity for p in purchases ]))
-        
-        since = ancient.strftime("%Y-%m-%d")
-        today = now.strftime("%Y-%m-%d")
+            potential_quantity = list(set([ p.quantity for p in purchases ]))
+            
+            since = ancient.strftime("%Y-%m-%d")
+            today = now.strftime("%Y-%m-%d")
 
-        return render_template('purchase_history.html', 
-                                title='Purchase History', 
-                                purchase=purchases,
-                                potential_sellers=potential_sellers, 
-                                potential_quantity=potential_quantity, 
-                                search_seller="",
-                                search_quantity="",
-                                since=since,
-                                to=today)
+            return render_template('purchase_history.html', 
+                                    title='Purchase History', 
+                                    purchase=purchases,
+                                    potential_sellers=potential_sellers, 
+                                    potential_quantity=potential_quantity, 
+                                    search_seller="",
+                                    search_quantity="",
+                                    since=since,
+                                    to=today)
 
-    elif request.method == "POST":
-        form_data = request.form
-        input_seller_fullname = form_data['seller']
-        input_seller = input_seller_fullname.split() 
-        input_quantity = form_data['item']
-        input_start_date = form_data['start_date']
-        input_end_date = form_data['end_date']
+        elif request.method == "POST":
+            form_data = request.form
+            input_seller_fullname = form_data['seller']
+            input_seller = input_seller_fullname.split() 
+            input_quantity = form_data['item']
+            input_start_date = form_data['start_date']
+            input_end_date = form_data['end_date']
+            
+            # pass user inputs as filter to the query
+            date_start, date_end = generateDateRange(input_start_date, input_end_date)
+            datetime_start, datetime_end = datetime.datetime(date_start[0], date_start[1], date_start[2], 0, 0, 0), datetime.datetime(date_end[0], date_end[1], date_end[2], 23, 59, 59)
+            
+            quantity = int(input_quantity) if input_quantity.isnumeric() else -1
         
-        # pass user inputs as filter to the query
-        date_start, date_end = generateDateRange(input_start_date, input_end_date)
-        datetime_start, datetime_end = datetime.datetime(date_start[0], date_start[1], date_start[2], 0, 0, 0), datetime.datetime(date_end[0], date_end[1], date_end[2], 23, 59, 59)
-        
-        quantity = int(input_quantity) if input_quantity.isnumeric() else -1
-    
-        seller_firstname = '%'
-        seller_lastname = '%' 
-        
-        if len(input_seller) >= 2:
-            seller_firstname = '%' + input_seller[0].lower() + '%'
-            # seller_firstname = input_seller[0].lower() 
-            seller_lastname = '%' + input_seller[1].lower() + '%'
-            # seller_lastname = input_seller[1].lower()
-        elif len(input_seller) == 1:
-            seller_firstname = '%' + input_seller[0].lower() + '%'
-            # seller_firstname = input_seller[0].lower() 
-        
+            seller_firstname = '%'
+            seller_lastname = '%' 
+            
+            if len(input_seller) >= 2:
+                seller_firstname = '%' + input_seller[0].lower() + '%'
+                # seller_firstname = input_seller[0].lower() 
+                seller_lastname = '%' + input_seller[1].lower() + '%'
+                # seller_lastname = input_seller[1].lower()
+            elif len(input_seller) == 1:
+                seller_firstname = '%' + input_seller[0].lower() + '%'
+                # seller_firstname = input_seller[0].lower() 
+            
 
-        purchases = Purchase.get_all_by_uid_since(current_user.id, datetime_start, datetime_end, quantity, seller_firstname, seller_lastname)
-        
-        potential_sellers = []
-        for p in purchases:
-            for s in p.sname:
-                if s not in potential_sellers:
-                    potential_sellers.append(s)
-        
+            purchases = Purchase.get_all_by_uid_since(curr_user.id, datetime_start, datetime_end, quantity, seller_firstname, seller_lastname)
+            
+            potential_sellers = []
+            for p in purchases:
+                for s in p.sname:
+                    if s not in potential_sellers:
+                        potential_sellers.append(s)
+            
 
-        potential_quantity = list(set([ p.quantity for p in purchases ]))
-        
-        if quantity == -1: quantity = ""
+            potential_quantity = list(set([ p.quantity for p in purchases ]))
+            
+            if quantity == -1: quantity = ""
 
-        return render_template('purchase_history.html', 
-                                title='Purchase History', 
-                                purchase=purchases, 
-                                potential_sellers=potential_sellers, 
-                                potential_quantity=potential_quantity,
-                                search_seller=input_seller_fullname,
-                                search_quantity=quantity,
-                                since=datetime_start.strftime("%Y-%m-%d"),
-                                to=datetime_end.strftime("%Y-%m-%d"))
+            return render_template('purchase_history.html', 
+                                    title='Purchase History', 
+                                    purchase=purchases, 
+                                    potential_sellers=potential_sellers, 
+                                    potential_quantity=potential_quantity,
+                                    search_seller=input_seller_fullname,
+                                    search_quantity=quantity,
+                                    since=datetime_start.strftime("%Y-%m-%d"),
+                                    to=datetime_end.strftime("%Y-%m-%d"))
+    else:
+        form = LoginForm()
+        return render_template('login.html', title='Sign In', form=form)
+
+
 
 
 
