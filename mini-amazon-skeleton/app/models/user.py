@@ -13,25 +13,6 @@ class User(UserMixin):
             self.star = star
             self.upvote = upvote
             self.customer_id = customer_id
-    
-
-#    @staticmethod
-#    def add_seller_review(customer_id, seller_id, content, star, upvote):
-#            rows = app.db.execute(
-#                """
-#                INSERT INTO SellerReviews(customer_id, seller_id, content, star, upvote, created_at) 
-#                VALUES(:customer_id, :seller_id, :content, :star, :upvote, :created_at)
-#                ON CONFLICT (customer_id, seller_id) DO UPDATE
-#                SET content = :content, star = :star, upvote = :upvote, created_at = :created_at
-#                RETURNING customer_id""", 
-#                customer_id=customer_id,
-#                seller_id=seller_id, 
-#                content=content,
-#                star=star,
-#                upvote=upvote,
-#                created_at=datetime.now())
-#            return id if rows else None
-
 
     def __init__(self, id, email, firstname, lastname, address, is_seller, content=[], star=[], upvote=[], customer_id=[]):
         self.id = id

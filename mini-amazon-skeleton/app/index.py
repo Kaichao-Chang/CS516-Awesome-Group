@@ -18,7 +18,7 @@ def index():
     if current_user.is_authenticated:
         purchases = Purchase.get_all_by_uid_since(
             # Need to check the following line: 
-            current_user.id, datetime.datetime(1980, 9, 14, 0, 0, 0), datetime.datetime(2030, 9, 14, 0, 0, 0), 1, 'Mike', 'Zhang')
+            current_user.id, datetime.datetime(1980, 9, 14, 0, 0, 0), datetime.datetime(2030, 9, 14, 0, 0, 0), 1, 'a', 'a')
 
         if Seller.is_seller(current_user.id):
             current_user.is_current_seller = True

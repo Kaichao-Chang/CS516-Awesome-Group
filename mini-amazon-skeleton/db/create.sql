@@ -87,5 +87,7 @@ CREATE TABLE Cart (
 CREATE TABLE Orders (
     order_id INT NOT NULL,
     pur_id INT NOT NULL REFERENCES Purchases(id),
-    uid INT NOT NULL REFERENCES Users(id)
+    uid INT NOT NULL REFERENCES Users(id),
+    completed_status BOOLEAN DEFAULT TRUE,
+    completion_datetime TIMESTAMPTZ DEFAULT Now()
 );

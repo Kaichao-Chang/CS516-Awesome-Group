@@ -1,12 +1,8 @@
-
-
-{% if current_user.is_authenticated %}
-
-<h1>Your Current Orders:</h1>
+<h1>Your Purchase History:</h1>
 
 <br/>
 
-<h3>Search</h3>
+<h3>Search and filter your purchase history:</h3>
 <form action="{{ url_for('users.purchase_history') }}" method="POST">
     <input type="text" name="seller" id="tags_seller" placeholder="by seller", value="{{search_seller}}">
     <input type="text" name="item" id="tags_item" placeholder="by quantity" value="{{search_quantity}}">
@@ -49,24 +45,26 @@
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
-      <th scope="col">Purchase ID</th>
+      <th scope="col">Order ID</th>
       <th scope="col">Total Quantity</th>
-      <th scope="col">Total Price</th>
+      <th scope="col">Total Amount</th>
       <th scope="col">Seller Name</th>
       <th scope="col">Purchase Time</th>
+      <!-- <th scope="col">Detail</th> -->
     </tr>
   </thead>
+
   <tbody>
     {% for p in purchase%}
       <tr>
-        <th scope="row">{{p.id}}</th>
+        <th scope="row">{{p.oid}}</th>
         <td>{{p.quantity}}</td>
         <td>{{p.price}}</td>
         <td>
             <!-- only show 3 sellers in one cell. -->
             {% if p.sname|length <= 3 %}
                 {% for seller in p.sname %}
-                    <a href="{{ url_for('users.public_view_user', id=p.seller_id[loop.index0]) }}">{{p.sname[loop.index0]}}</a>
+                    <a href="{{ url_for('users.public_view_user', id=p.sid[loop.index0]) }}">{{p.sname[loop.index0]}}</a>
                     {% if loop.index0 < p.sname|length - 1 %}
                     ,
                     {% endif %}
@@ -75,7 +73,7 @@
             
             {% if p.sname|length > 3 %}
                 {% for i in range(3) %}
-                    <a href="{{ url_for('users.public_view_user', id=p.seller_id[i]) }}">{{p.sname[i]}}</a>
+                    <a href="{{ url_for('users.public_view_user', id=p.sid[i]) }}">{{p.sname[i]}}</a>
                     {% if i < p.sname|length - 1 %}
                     ,
                     {% endif %}
@@ -84,8 +82,9 @@
             {% endif %}
         </td>
         <td>{{p.time_purchased}}</td>
+        <!-- <td><a href="{{ url_for('order.get_all_by_oid', oid=p.oid) }}">More details</a></td> -->
       </tr>
     {% endfor %}
   </tbody>
+
 </table>
-{% endif %}
