@@ -72,9 +72,7 @@ CREATE TABLE Sales (
 );
 
 CREATE TABLE Order_fulfill (
-    order_id INT NOT NULL,
     id INT REFERENCES Purchases(id),
-    uid INT NOT NULL REFERENCES Users(id),
     time_fulfilled timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC')
 );
 
@@ -83,4 +81,10 @@ CREATE TABLE Cart (
     uid INT NOT NULL REFERENCES Users(id),
     pid INT NOT NULL REFERENCES Products(id),
     quantity INT NOT NULL
+);
+
+CREATE TABLE Orders (
+    order_id INT NOT NULL,
+    pur_id INT NOT NULL REFERENCES Purchases(id),
+    uid INT NOT NULL REFERENCES Users(id)
 );

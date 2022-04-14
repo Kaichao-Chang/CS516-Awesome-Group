@@ -28,6 +28,7 @@
         </td>
         <td>{{sell_history.inv}} </a> </td>
         <td>{% if sell_history.available %} Still Selling 
+            {% if sell_history.inv == 0 %} Sold Out {% endif %}
             {% else %} Already Deleted by You
             {% endif %}
           </a> </td>

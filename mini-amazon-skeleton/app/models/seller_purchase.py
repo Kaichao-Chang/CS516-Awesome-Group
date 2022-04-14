@@ -120,7 +120,7 @@ class Seller_purchase:
 
         app.db.execute(
             "UPDATE Products "
-            "SET inv = :new_inv"
+            "SET inv = :new_inv "
             "WHERE id = :product_id",
             product_id = product_id,
             new_inv = new_inv
@@ -150,4 +150,4 @@ class Seller_purchase:
             product_id = product_id
         )
 
-        return inv[0][0] > quantity[0][0]
+        return inv[0][0] >= quantity[0][0]
