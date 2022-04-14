@@ -29,6 +29,7 @@ CREATE TABLE Purchases (
     pid INT NOT NULL REFERENCES Products(id),
     seller_id INT NOT NULL,
     quantity INT NOT NULL,
+    unit_price INT NOT NULL,
     fulfill_by_seller BOOLEAN DEFAULT FALSE,
     time_purchased timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC')
 );

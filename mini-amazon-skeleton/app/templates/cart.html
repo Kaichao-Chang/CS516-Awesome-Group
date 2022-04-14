@@ -24,7 +24,7 @@
     {% endfor %}
   </tbody>
 </table>
-
+<a class="btn btn-secondary" href="{{ url_for('users.checkout') }}" role="button">Checkout</a>
 <br><br>
 {% include '_include/purchase_history.html' %}
 {% endblock %}
