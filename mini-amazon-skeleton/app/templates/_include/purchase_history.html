@@ -49,12 +49,11 @@
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
-      <th scope="col">Order ID</th>
+      <th scope="col">Purchase ID</th>
       <th scope="col">Total Quantity</th>
       <th scope="col">Total Price</th>
-      <th scope="col">Seller</th>
+      <th scope="col">Seller Name</th>
       <th scope="col">Purchase Time</th>
-      <th scope="col">Detail</th>
     </tr>
   </thead>
   <tbody>
@@ -67,7 +66,7 @@
             <!-- only show 3 sellers in one cell. -->
             {% if p.sname|length <= 3 %}
                 {% for seller in p.sname %}
-                    <a href="{{ url_for('users.user_public_view', id=p.seller_id[loop.index0]) }}">{{p.sname[loop.index0]}}</a>
+                    <a href="{{ url_for('users.public_view_user', id=p.seller_id[loop.index0]) }}">{{p.sname[loop.index0]}}</a>
                     {% if loop.index0 < p.sname|length - 1 %}
                     ,
                     {% endif %}
