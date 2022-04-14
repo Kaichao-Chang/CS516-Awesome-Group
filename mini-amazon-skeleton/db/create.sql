@@ -29,7 +29,7 @@ CREATE TABLE Purchases (
     pid INT NOT NULL REFERENCES Products(id),
     seller_id INT NOT NULL,
     quantity INT NOT NULL,
-    unit_price INT NOT NULL,
+    unit_price DECIMAL(12, 2)  NOT NULL,
     fulfill_by_seller BOOLEAN DEFAULT FALSE,
     time_purchased timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC')
 );
@@ -90,4 +90,12 @@ CREATE TABLE Orders (
     uid INT NOT NULL REFERENCES Users(id),
     completed_status BOOLEAN DEFAULT TRUE,
     placed_datetime TIMESTAMPTZ DEFAULT Now()
+);
+
+CREATE TABLE Messages (
+    uid INT NOT NULL,
+    seller_id INT NOT NULL,
+    msg VARCHAR(255),
+    from_user BOOLEAN,
+    time_of_message TIMESTAMPTZ DEFAULT Now()
 );

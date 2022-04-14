@@ -52,7 +52,6 @@ class Seller_purchase:
             "ORDER BY time_purchased DESC",
                               uid=uid,
                               purchases_id = purchases_id)
-        print(rows)
         return [Seller_purchase(*row) for row in rows]
 
     @staticmethod
@@ -71,7 +70,6 @@ class Seller_purchase:
             "ORDER BY time_purchased DESC",
                               uid=uid,
                               pid = pid)
-        print(rows)
         return [Seller_purchase(*row) for row in rows]
 
     @staticmethod
@@ -176,7 +174,6 @@ class Seller_purchase:
  
 
         sizes = [inv[0][0], quantity[0][0]]
-        print(sizes)
         explode = (0, 0.1)  
         fig, ax = plt.subplots()
         ax.pie(sizes, explode=explode, labels=labels, autopct= '%1.1f%%', startangle=90)
@@ -277,3 +274,34 @@ class Seller_purchase:
         r_l = inv[0][0] < ufquantity[0][0]
 
         return r_l
+
+    @staticmethod
+    def line_chart(id):
+
+  
+        quantity = app.db.execute(
+            "SELECT COALESCE(quantity, 0) "
+            "FROM Purchases "
+            "WHERE pid = :id "
+            "AND fulfill_by_seller = TRUE "
+            "ORDER BY time_purchased DESC",
+            id = id)
+
+        time = app.db.execute(
+            "SELECT time_purchased "
+            "FROM Purchases "
+            "WHERE pid = :id "
+            "AND fulfill_by_seller = TRUE "
+            "ORDER BY time_purchased DESC",
+            id = id
+        )
+        fig = plt.figure()
+        plt.plot(time, quantity, 'b*-', label = 'Order Fuifullment Time Trend')
+        plt.legend()
+        filename = str(uuid.uuid4())
+        fig.savefig(os.path.join(
+            app.instance_path,'../app/static/analysis_pic/' , filename
+        ))
+        plt.close(fig)
+
+        return filename
