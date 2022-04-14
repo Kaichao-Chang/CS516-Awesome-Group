@@ -5,6 +5,7 @@ from flask import current_app as app
 from .. import login
 from datetime import datetime
 
+
 class User(UserMixin):
 
     class Review:
@@ -20,20 +21,14 @@ class User(UserMixin):
         self.firstname = firstname
         self.lastname = lastname
         self.address = address
-        self.is_seller = True if is_seller is not None else False
-    
-    def buildup_profile(self, email, firstname, lastname, address):
-        self.email = email 
-        self.firstname = firstname
-        self.lastname = lastname
-        self.address = address
-        self.rev = []
+        self.is_seller = False if is_seller is None else True
+        self.reviews = []
 
         if self.is_seller:
             for a, _ in enumerate(content):
                 if _ is not None:
-                    rev_full = self.Review(content[a], content[a], content[a], content[a])
-                    self.rev.append(rev_full)
+                    rev_full = self.Review(content[a], star[a], upvote[a], customer_id[a])
+                    self.reviews.append(rev_full)
 
 
     # requirement 1: an existing user can log in using email and password.
@@ -134,7 +129,7 @@ class User(UserMixin):
         CASE WHEN u.id in (SELECT uid FROM Sellers) THEN true 
         ELSE false
         END AS is_seller,
-        ARRAY_AGG(content), ARRAY_AGG(star), ARRAY_AGG(upvote)
+        ARRAY_AGG(content), ARRAY_AGG(star), ARRAY_AGG(upvote), ARRAY_AGG(customer_id)
         FROM Users AS u
         LEFT JOIN SellerReviews AS s
         ON u.id = s.seller_id
@@ -142,6 +137,13 @@ class User(UserMixin):
         GROUP BY u.id, email, firstname, lastname, address, s.seller_id """,
         id=id)
         return User(*(rows[0])) if rows else None
+
+
+    def buildup_profile(self, email, firstname, lastname, address):
+        self.email = email 
+        self.firstname = firstname
+        self.lastname = lastname
+        self.address = address
 
     # requirement 2: Users can update all information except the id.
         # after updating the user's information, this function will return the user's unique id
