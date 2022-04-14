@@ -19,18 +19,20 @@ def index():
             current_user.is_current_seller = True
     
 
-    # # find the products current user has bought:
-    # if current_user.is_authenticated:
-    #     purchases = Purchase.get_all_by_uid_since(
-    #         # Need to check the following line: 
-    #         current_user.id, datetime.datetime(1980, 9, 14, 0, 0, 0), datetime.datetime(2030, 9, 14, 0, 0, 0), -1, 'a', 'a')
+     # find the products current user has bought:
+    if current_user.is_authenticated:
+        purchases = Purchase.get_all_by_uid_since(
+            # Need to check the following line: 
+            current_user.id, datetime.datetime(1980, 9, 3, 0, 0, 0), datetime.datetime(2023, 9, 4, 1, 2, 1), -1, 'a', 'a')
 
-    # else:
-    #     purchases = None
-    purchases = []
+        if Seller.is_seller(current_user.id):
+            current_user.is_current_seller = True
+    else:
+        purchases = None
+    #purchases = []
 
 
     # render the page by adding information to the index.html file
     return render_template('index.html',
                            avail_products=products,
-                           purchase_history=purchases)
+                           purchase=purchases)

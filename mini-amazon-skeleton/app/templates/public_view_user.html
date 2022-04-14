@@ -5,13 +5,12 @@
 <h2>The followings are this user's basic information:</h2>
 <p><b>ID: </b>{{user.id}} <br> <b>Your name:</b> {{user.firstname}}&nbsp;{{user.lastname}}</p>
 
-<!-- 
+
 {% if user.is_seller %}
 <b>Email:  </b><u>{{user.email}}</u><br/>
 <b>Address:  </b><u>{{user.address}}</u><br/>
     
-    
-    <br/><br/><h2>If this user is a seller, show seller reviews this user received:</h2><br/>
+<h2>If this user is a seller, show seller reviews this user received:</h2>
     
     <ol>
         {% for review in user.reviews %}
@@ -32,7 +31,7 @@
         </ol>
     
 {% endif %}
- -->
+
 
 
 {% endblock %}

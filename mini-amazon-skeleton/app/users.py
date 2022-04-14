@@ -166,119 +166,78 @@ def balance():
 
 
 
-########### Still need to add a function to add seller review - coming soon... ############################
-# ...
+##################### The following is a function for purchase history ####################
 
-########### Still need to add a function for purchase history - coming soon... ############################
-
-def generateDateRange(date1, date2):
+# I just use the following function to split the date variable into year, month, and day:
+def Date_Split(date1, date2):
     date1_year, date1_month, date1_day = list(map(int, date1.split("-")))
     date2_year, date2_month, date2_day = list(map(int, date2.split("-")))
-    
-    if date1_year > date2_year:
-        return [ date2_year, date2_month, date2_day ], [date1_year, date1_month, date1_day]
-    elif date1_year < date2_year:
-        return [date1_year, date1_month, date1_day], [ date2_year, date2_month, date2_day ]
-    else:
-        if date1_month > date2_month:
-            return [ date2_year, date2_month, date2_day ], [date1_year, date1_month, date1_day]
-        elif date2_month > date1_month:
-            return [date1_year, date1_month, date1_day], [ date2_year, date2_month, date2_day ]
-        else:
-            if date1_day > date2_day:
-                return [ date2_year, date2_month, date2_day ], [date1_year, date1_month, date1_day]
-            elif date2_day > date1_day:
-                return [date1_year, date1_month, date1_day], [ date2_year, date2_month, date2_day ]
-            else: 
-                return [date1_year, date1_month, date1_day], [ date2_year, date2_month, date2_day ]
+    return [date1_year, date1_month, date1_day], [ date2_year, date2_month, date2_day ]
 
 
+# The following function is to filter of purchase history
 @bp.route('/purchase_history', methods=['GET', 'POST'])
 def purchase_history():
     if Seller.is_seller(current_user.id):
         current_user.is_current_seller = True
-
-    if current_user.is_authenticated:
+ 
+    if request.method == "POST":
+        form_data = request.form
+        input_seller_fullname = form_data['seller']
+        input_seller = input_seller_fullname.split() 
+        input_start_date = form_data['start_date']
+        input_end_date = form_data['end_date']
         
-        if request.method == "GET":
-            ancient = datetime.datetime(1980, 9, 14, 0, 0, 0)
-            now = datetime.datetime.now()
-            purchases = Purchase.get_all_by_uid_since(current_user.id, ancient, now)
-                
-            potential_sellers = []
-            for p in purchases:
-                for s in p.sname:
-                    if s not in potential_sellers:
-                        potential_sellers.append(s)
-            
-            potential_quantity = list(set([ p.quantity for p in purchases ]))
-            
-            since = ancient.strftime("%Y-%m-%d")
-            today = now.strftime("%Y-%m-%d")
-
-            return render_template('purchase_history.html', 
-                                    title='Purchase History', 
-                                    purchase=purchases,
-                                    potential_sellers=potential_sellers, 
-                                    potential_quantity=potential_quantity, 
-                                    search_seller="",
-                                    search_quantity="",
-                                    since=since,
-                                    to=today)
-
-        elif request.method == "POST":
-            form_data = request.form
-            input_seller_fullname = form_data['seller']
-            input_seller = input_seller_fullname.split() 
-            input_quantity = form_data['item']
-            input_start_date = form_data['start_date']
-            input_end_date = form_data['end_date']
-            
-            # pass user inputs as filter to the query
-            date_start, date_end = generateDateRange(input_start_date, input_end_date)
-            datetime_start, datetime_end = datetime.datetime(date_start[0], date_start[1], date_start[2], 0, 0, 0), datetime.datetime(date_end[0], date_end[1], date_end[2], 23, 59, 59)
-            
-            quantity = int(input_quantity) if input_quantity.isnumeric() else -1
+        # The user will enter something here to do filterng:
+        date_start, date_end = Date_Split(input_start_date, input_end_date)
+        datetime_start, datetime_end = datetime.datetime(date_start[0], date_start[1], date_start[2], 0, 0, 0), datetime.datetime(date_end[0], date_end[1], date_end[2], 0, 0, 0)
+    
+        seller_firstname = '%'
+        seller_lastname = '%' 
         
-            seller_firstname = '%'
-            seller_lastname = '%' 
-            
-            if len(input_seller) >= 2:
-                seller_firstname = '%' + input_seller[0].lower() + '%'
-                # seller_firstname = input_seller[0].lower() 
-                seller_lastname = '%' + input_seller[1].lower() + '%'
-                # seller_lastname = input_seller[1].lower()
-            elif len(input_seller) == 1:
-                seller_firstname = '%' + input_seller[0].lower() + '%'
-                # seller_firstname = input_seller[0].lower() 
-            
+        if len(input_seller) >= 2:
+            seller_firstname = '%' + input_seller[0] + '%'
+            seller_lastname = '%' + input_seller[1] + '%'
+        elif len(input_seller) == 1:
+            seller_firstname = '%' + input_seller[0] + '%'
+        
+        purchases = Purchase.get_all_by_uid_since(current_user.id, datetime_start, datetime_end, seller_firstname, seller_lastname)
+        
+        potential_sellers = []
+        for p in purchases:
+            for s in p.sname:
+                if s not in potential_sellers:
+                    potential_sellers.append(s)
+    
+        return render_template('purchase_history.html', 
+                                title='History Of Purchase', 
+                                purchase=purchases, 
+                                potential_sellers=potential_sellers, 
+                                search_seller=input_seller_fullname,
+                                since=datetime_start.strftime("%Y-%m-%d"),
+                                to=datetime_end.strftime("%Y-%m-%d"))
 
-            purchases = Purchase.get_all_by_uid_since(curr_user.id, datetime_start, datetime_end, quantity, seller_firstname, seller_lastname)
+    elif request.method == "GET":
+        ancient = datetime.datetime(1980, 9, 14, 0, 0, 0)
+        now = datetime.datetime.now()
+        purchases = Purchase.get_all_by_uid_since(current_user.id, ancient, now)
             
-            potential_sellers = []
-            for p in purchases:
-                for s in p.sname:
-                    if s not in potential_sellers:
-                        potential_sellers.append(s)
-            
+        potential_sellers = []
+        for p in purchases:
+            for s in p.sname:
+                if s not in potential_sellers:
+                    potential_sellers.append(s)
+        
+        since = ancient.strftime("%Y-%m-%d")
+        today = now.strftime("%Y-%m-%d")
 
-            potential_quantity = list(set([ p.quantity for p in purchases ]))
-            
-            if quantity == -1: quantity = ""
-
-            return render_template('purchase_history.html', 
-                                    title='Purchase History', 
-                                    purchase=purchases, 
-                                    potential_sellers=potential_sellers, 
-                                    potential_quantity=potential_quantity,
-                                    search_seller=input_seller_fullname,
-                                    search_quantity=quantity,
-                                    since=datetime_start.strftime("%Y-%m-%d"),
-                                    to=datetime_end.strftime("%Y-%m-%d"))
-    else:
-        form = LoginForm()
-        return render_template('login.html', title='Sign In', form=form)
-
+        return render_template('purchase_history.html', 
+                                title='History Of Purchase', 
+                                purchase=purchases,
+                                potential_sellers=potential_sellers, 
+                                search_seller="",
+                                since=since,
+                                to=today)
 
 
 
