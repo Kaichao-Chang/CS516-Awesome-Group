@@ -40,3 +40,25 @@ Where uid = :uid AND pid = :pid
 DELETE FROM Cart
 Where uid = :uid AND pid = :pid
 """, uid=uid, pid=pid)
+
+        @staticmethod
+        def checkout(uid):
+            values = app.db.execute( """
+Select Cart.uid, Cart.pid, Products.seller_id, Cart.quantity, Products.price
+From Cart
+LEFT JOIN Products ON Products.id = Cart.pid
+Where Cart.uid = :uid
+""", uid=uid)
+            print("look here",values)
+            print("flag")
+            for row in values:
+                print("row",row)
+                app.db.execute("""
+    INSERT INTO Purchases (uid, pid, seller_id, quantity, unit_price)
+    VALUES (:uid, :pid, :seller_id, :quantity, :unit_price)
+    """, uid=row.uid, pid=row.pid, seller_id=row.seller_id, quantity=row.quantity, unit_price=row.price)
+            app.db.execute("""
+DELETE FROM Cart
+Where uid = :uid
+""", uid=uid)
+            return True

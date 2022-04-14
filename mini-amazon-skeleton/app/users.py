@@ -587,3 +587,11 @@ def changeCartQuantity(pid: int):
 #     else:
 #         avail_history = None
 #     return render_template('items_on_sale.html', avail_history = avail_history)
+
+@bp.route('/checkout', methods = ['GET', 'POST'])
+def checkout():
+    # TO DO: redirect to order page
+    if Cart.checkout(current_user.id):
+        return redirect(url_for('index.index'))
+    else:
+        return redirect(url_for('users.cart'))

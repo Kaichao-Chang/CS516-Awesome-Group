@@ -151,3 +151,4 @@ class Seller_purchase:
         )
 
         return inv[0][0] > quantity[0][0]
+        
