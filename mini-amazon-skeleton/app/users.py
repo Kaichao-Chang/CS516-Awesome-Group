@@ -110,6 +110,8 @@ class UpdateProfileForm(FlaskForm):
 
 @bp.route('/account', methods=['GET', 'POST'])
 def account():
+    if Seller.is_seller(current_user.id):
+        current_user.is_current_seller = True
     form = UpdateProfileForm()
     if form.validate_on_submit():
         if User.update_infor(form.email.data,
@@ -133,6 +135,8 @@ class UpdatePasswordForm(FlaskForm):
 
 @bp.route('/password', methods=['GET', 'POST'])
 def password():
+    if Seller.is_seller(current_user.id):
+        current_user.is_current_seller = True
     form = UpdatePasswordForm()
     if form.validate_on_submit():
         if User.update_password(form.new_pwd.data):
@@ -149,6 +153,8 @@ class BalanceForm(FlaskForm):
 
 @bp.route('/balance', methods=['GET', 'POST'])
 def balance():
+    if Seller.is_seller(current_user.id):
+        current_user.is_current_seller = True
     form = BalanceForm()
     if form.validate_on_submit():
         if User.update_balance(current_user.id, form.topup.data, form.withdraw.data):
@@ -209,6 +215,8 @@ def generateDateRange(date1, date2):
 
 @bp.route('/purchase_history', methods=['GET', 'POST'])
 def purchase_history():
+    if Seller.is_seller(current_user.id):
+        current_user.is_current_seller = True
 
     if current_user.is_authenticated:
         
@@ -311,6 +319,8 @@ def purchase_history():
 ############# Public View of User functions #################
 @bp.route('/public_view_user/<int:id>')
 def public_view_user(id):
+    if Seller.is_seller(current_user.id):
+        current_user.is_current_seller = True
     user = User.get(id)
     return render_template('public_view_user.html', title='Public View of This User', user=user)
 
@@ -326,7 +336,7 @@ class SellerRegistrationForm(FlaskForm):
 
     def validate_input(self, seller_register):
         if seller_register.data != "y": 
-            raise ValidationError('Invalid Input. To register, input "y" blow!')
+            raise ValidationError('Invalid Input. To register, input "y" above!')
 
 @bp.route('/seller_register', methods=['GET', 'POST'])
 def seller_register():
@@ -547,6 +557,9 @@ def fulfilled(id: int):
 
 @bp.route('/cart/', methods = ['GET', 'POST'])
 def cart():
+    if Seller.is_seller(current_user.id):
+        current_user.is_current_seller = True
+
     if current_user.is_authenticated:
         cart = Cart.get_cart(current_user.id)
     else:
@@ -559,6 +572,8 @@ class CartChangeForm(FlaskForm):
 
 @bp.route('/addToCart/<int:pid>', methods = ['GET', 'POST'])
 def addToCart(pid: int):
+    if Seller.is_seller(current_user.id):
+        current_user.is_current_seller = True
     if current_user.is_authenticated:
         Cart.add_cart(current_user.id, pid)
         return redirect(url_for('users.changeCartQuantity', form=CartChangeForm(), pid=pid))
@@ -567,12 +582,16 @@ def addToCart(pid: int):
     
 @bp.route('/delFromCart/<int:pid>', methods = ['GET', 'POST'])
 def delFromCart(pid: int):
+    if Seller.is_seller(current_user.id):
+        current_user.is_current_seller = True
     Cart.delete_cart(current_user.id, pid)
     cart = Cart.get_cart(current_user.id)
     return render_template('cart.html', cart = cart)
 
 @bp.route('/changeCartQuantity/<int:pid>', methods = ['GET', 'POST'])
 def changeCartQuantity(pid: int):
+    if Seller.is_seller(current_user.id):
+        current_user.is_current_seller = True
     form = CartChangeForm()
     if form.validate_on_submit():
         Cart.change_cart(current_user.id, pid, quantity=form.quantity.data)
