@@ -89,5 +89,5 @@ CREATE TABLE Orders (
     pur_id INT NOT NULL REFERENCES Purchases(id),
     uid INT NOT NULL REFERENCES Users(id),
     completed_status BOOLEAN DEFAULT TRUE,
-    completion_datetime TIMESTAMPTZ DEFAULT Now()
+    placed_datetime TIMESTAMPTZ DEFAULT Now()
 );
