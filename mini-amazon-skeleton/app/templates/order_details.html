@@ -30,6 +30,12 @@
     {% endfor %}
   </tbody>
 </table>
+<img src="{{ url_for('static', filename='/analysis_pic/' + file_name + '.png') }}" />
+{% if runing_low %} <span style="color: rgb(255, 0, 0);">This product is running low. Please replenish inventory. </span> 
+{% endif %}
+<img src="{{ url_for('static', filename='/analysis_pic/' + file_name_1 + '.png') }}" />
+{% if runing_low_1 %} <span style="color: rgb(255, 0, 0);">The quantity of unfulfilled order is larger than the remaining inventory. Please replenish inventory. </span> 
+{% endif %}
 <br><br>
 <a class="btn btn-secondary" href="{{ url_for('users.selling_items_history') }}" role="button">Back to last page</a>
 <a class="btn btn-secondary" href="{{ url_for('index.index') }}" role="button">Back to main page</a>

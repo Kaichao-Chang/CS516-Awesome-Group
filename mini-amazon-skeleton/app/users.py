@@ -453,11 +453,15 @@ def detailed_order(pid: int):
     current_user.is_current_seller = True
     p_name = Seller_purchase.get_product_name(pid)
     p_name = list(p_name[0])
+    file_name = Seller_purchase.pie_chart(pid)
+    runing_low = Seller_purchase.running_low(pid)
+    file_name_1 = Seller_purchase.bar_chart(pid)
+    running_low_1 =  Seller_purchase.running_low_1(pid)
     if current_user.is_authenticated:
         avail_history = Seller_purchase.get_all_by_product(pid, current_user.id)
     else:
         avail_history = None
-    return render_template('order_details.html', avail_history = avail_history, p_name = p_name[0])
+    return render_template('order_details.html', avail_history = avail_history, p_name = p_name[0], file_name = file_name, runing_low = runing_low, file_name_1 = file_name_1, running_low_1 = running_low_1)
 
 class OrderFulfilledForm(FlaskForm):
     ans = StringField('Are you sure you want to fuifilled this following order? (input "f" in the block below to fulfill)', validators=[DataRequired()])

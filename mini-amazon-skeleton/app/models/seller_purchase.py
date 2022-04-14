@@ -1,5 +1,8 @@
 from flask import current_app as app
-
+import matplotlib.pyplot as plt
+import os
+from werkzeug.utils import secure_filename
+import uuid
 
 class Seller_purchase:
     def __init__(self, id, uid, buyer_fname, buyer_lname, buyer_addr, pid, seller_id, quantity, fulfilled_by_seller, time_purchased, p_name, price, time_fulfilled):
@@ -151,3 +154,126 @@ class Seller_purchase:
         )
 
         return inv[0][0] >= quantity[0][0]
+
+    @staticmethod
+    def pie_chart(id):
+        labels = 'Remaining Inventory', 'Quantity Already Sold'
+
+  
+        quantity = app.db.execute(
+            "SELECT COALESCE(SUM(quantity), 0) "
+            "FROM Purchases "
+            "WHERE pid = :id "
+            "AND fulfill_by_seller = TRUE",
+            id = id)
+
+        inv = app.db.execute(
+            "SELECT COALESCE(inv, 0) "
+            "FROM Products "
+            "WHERE id = :id",
+            id = id
+        )
+ 
+
+        sizes = [inv[0][0], quantity[0][0]]
+        print(sizes)
+        explode = (0, 0.1)  
+        fig, ax = plt.subplots()
+        ax.pie(sizes, explode=explode, labels=labels, autopct= '%1.1f%%', startangle=90)
+        ax.axis('equal') 
+        
+        filename = str(uuid.uuid4())
+        
+        fig.savefig(os.path.join(
+            app.instance_path,'../app/static/analysis_pic/' , filename
+        ))
+        plt.close(fig)
+
+        return filename
+    
+    @staticmethod
+    def running_low(id):
+
+        quantity = app.db.execute(
+            "SELECT COALESCE(SUM(quantity), 0) "
+            "FROM Purchases "
+            "WHERE pid = :id "
+            "AND fulfill_by_seller = TRUE",
+            id = id)
+
+        inv = app.db.execute(
+            "SELECT COALESCE(inv, 0) "
+            "FROM Products "
+            "WHERE id = :id",
+            id = id
+        )
+
+        r_l = inv[0][0]/(inv[0][0] +quantity[0][0]) < 0.2
+
+        return r_l
+
+    @staticmethod
+    def bar_chart(id):
+        labels = ['Fulfilled quantity', 'Unfulfilled quantity', 'remaining inventory']
+
+  
+        fquantity = app.db.execute(
+            "SELECT COALESCE(SUM(quantity), 0) "
+            "FROM Purchases "
+            "WHERE pid = :id "
+            "AND fulfill_by_seller = TRUE",
+            id = id)
+
+        ufquantity = app.db.execute(
+            "SELECT COALESCE(SUM(quantity), 0) "
+            "FROM Purchases "
+            "WHERE pid = :id "
+            "AND fulfill_by_seller = FALSE",
+            id = id)
+
+        inv = app.db.execute(
+            "SELECT COALESCE(inv, 0) "
+            "FROM Products "
+            "WHERE id = :id",
+            id = id
+        )
+
+        fig = plt.figure(figsize = (5,7))
+
+        sizes = [fquantity[0][0], ufquantity[0][0], inv[0][0]]
+
+        plt.bar(labels, sizes, linewidth = 0.3, width = 0.5, facecolor = 'lightskyblue')
+        
+        for a,b in zip(labels, sizes):
+
+            plt.text(a, b, '%.0f' % b, ha='center', va= 'bottom',fontsize=7)
+
+        filename = str(uuid.uuid4())
+        
+        fig.savefig(os.path.join(
+            app.instance_path,'../app/static/analysis_pic/' , filename
+        ))
+        plt.close(fig)
+
+        return filename
+
+    @staticmethod
+    def running_low_1(id):
+
+        ufquantity = app.db.execute(
+            "SELECT COALESCE(SUM(quantity), 0) "
+            "FROM Purchases "
+            "WHERE pid = :id "
+            "AND fulfill_by_seller = FALSE",
+            id = id)
+
+        inv = app.db.execute(
+            "SELECT COALESCE(inv, 0) "
+            "FROM Products "
+            "WHERE id = :id",
+            id = id
+        )
+
+        r_l = inv[0][0] < ufquantity[0][0]
+
+        return r_l
