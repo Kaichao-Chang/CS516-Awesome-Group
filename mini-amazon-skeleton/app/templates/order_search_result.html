@@ -1,26 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>History of Selling Orders</h2>
+<h2>Selling Orders Search Results for 
+  {% if key_word == 0%} key words <span style="color: rgb(0, 140, 255);"> {{search_msg}} </span> and 
+  {% endif %}
+  {% if fulfill == 0%}  <span style="color: rgb(0, 140, 255);"> All </span>
+  {% elif fulfill == 1%} <span style="color: rgb(0, 140, 255);"> Fulfilled </span>
+  {% else %} <span style="color: rgb(0, 140, 255);"> Unfulfilled </span> {% endif %}
+  Orders
 
-<p><center> 
-  <div class="col-sm-8 search-bar">
-    <form action="/search_order" method="post" class="input-group mb-3">
-      <input type="text" class="form-control" name='search-message' placeholder={{keyword}}>
-      <div class="input-group-prepend">
-        <select class="custom-select" name="fulfill">
-          <option value=0>All</option>
-          <option value=1>Fulfilled</option>
-          <option value=2>Unfilfilled</option>
-        </select>
-      </div>
-      <div class="input-group-append">
-        <button class="btn btn-outline-secondary" type="submit">Search</button>
-      </div>
-    </form>
-  </div>
-</center></p>
-{% if is_seller %}
+</h2>
+
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
@@ -35,7 +25,7 @@
   </thead>
 
   <tbody>
-    {% for avail in avail_history%}
+    {% for avail in search_order%}
       <tr>
         <th scope="row">{{avail.p_name}}</th>
         <td>{{avail.quantity}}</td>
@@ -51,12 +41,7 @@
     {% endfor %}
   </tbody>
 </table>
-{% else %}
-    <div class="text-center">
-      <p> <font size= 8> You need to sign up for a seller before viewing Selling History!</font> </p>
-      </div>
-    <p>
-    {% endif %} 
 <br><br>
+<a class="btn btn-secondary" href="{{ url_for('users.selling_history') }}" role="button">Back to last page</a>
 <a class="btn btn-secondary" href="{{ url_for('index.index') }}" role="button">Back to main page</a>
 {% endblock %}
