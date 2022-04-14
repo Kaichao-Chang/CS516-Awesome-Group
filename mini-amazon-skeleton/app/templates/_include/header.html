@@ -44,14 +44,14 @@
           aria-haspopup="true" aria-expanded="false"></button>
         <div class="dropdown-menu">
           <a class="dropdown-item" href="{{ url_for('users.cart') }}">My Cart</a>
-          <a class="dropdown-item" href="{{ url_for('users.order') }}">Order</a>
+          <a class="dropdown-item" href="{{ url_for('users.order') }}">My Order(s)</a>
           <a class="dropdown-item" href="{{ url_for('users.account') }}">Update My Profile</a>
           <a class="dropdown-item" href="{{ url_for('users.password') }}">Change My Password</a>
           <a class="dropdown-item" href="{{ url_for('users.balance') }}">Update My Account Balance</a>
           <a class="dropdown-item" href="{{ url_for('users.public_view_user', id=current_user.id) }}">Public View For The User</a>
           {% if current_user.is_current_seller %} 
           <a class="dropdown-item" href="{{ url_for('users.seller_post') }}"><span style="color: rgb(0, 17, 255);">Post Item(s)</span> </a>
-          <a class="dropdown-item" href="{{ url_for('users.items_on_sale') }}"><span style="color: rgb(0, 17, 255);">Items on Sale</span></a>
+          <a class="dropdown-item" href="{{ url_for('users.items_on_sale') }}"><span style="color: rgb(0, 17, 255);">Alter Items on Sale</span></a>
           <a class="dropdown-item" href="{{ url_for('users.selling_history') }}"><span style="color: rgb(0, 17, 255);">History of Selling Orders</span></a>
           <a class="dropdown-item" href="{{ url_for('users.selling_items_history') }}"><span style="color: rgb(0, 17, 255);">History of Selling Items</span> </a>
           {% else %}

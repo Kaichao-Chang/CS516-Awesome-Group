@@ -2,31 +2,35 @@
 
 {% block content %}
 <h2>My orders</h2>
-{% if is_seller %}
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
-      <th scope="col">Product Name</th>
-      <th scope="col">Product Image</th>
-      <th scope="col">Product Description</th>
-      <th scope="col">Product Category</th>
-      <th scope="col">Price</th>
-      <th scope="col">Overall Star</th>
-      <th scope="col">Inventory</th>
-      <th scope="col">Delete Items</th>
+      <th scope="col">Order ID</th>
+      <th scope="col">Number of Different Items</th>
+      <th scope="col">Total Price</th>
+      <th scope="col">Time Order Placed</th>
+      <th scope="col">Fulfillment Status</th>
     </tr>
   </thead>
 
   <tbody>
-    
+    {% for order in order_info%}
+    <tr>
+      <th scope="row">{{order.order_id}}</th>
+      <td>{{order.total_items}}</td>
+      <td>{{order.price}}</td>
+      <td>{{order.time_placed}}</td>
+      <td>{% if order.total_fulfill == order.total_items %}  This order is fulfilled by all seller(s).
+          {% elif order.total_fulfill == 0 %} This order is not fulfilled by any seller.
+          {% else %} This order is partially fulfilled by seller(s)
+          {% endif %} 
+          <a href="{{ url_for('users.detailed_order_buyer', order_id=order.order_id) }}">
+            Details
+      </td>
+    </tr>
+    {% endfor %}
   </tbody>
 </table>
-{% else %}
-    <div class="text-center">
-      <p> <font size= 8> You need to sign up for a seller before viewing Items on Sale!</font> </p>
-      </div>
-    <p>
-    {% endif %} 
 <br><br>
 <a class="btn btn-secondary" href="{{ url_for('index.index') }}" role="button">Back to main page</a>
 {% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Order Details for <span style="color: rgb(0, 140, 255);"> {{order_id}} </span> purchased at <span style="color: rgb(0, 140, 255);"> {{purchase_time[0][0]}} </span></h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Product Name</th>
+      <th scope="col">Purchasing quantity</th>
+      <th scope="col">Product Unit Price</th>
+      <th scope="col">Seller Name </th>
+      <th scope="col">Fulfillment Status</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for order in order_info%}
+      <tr>
+        <td>{{order.p_name}}</td>
+        <td>{{order.quantity}}</td>
+        <td>{{order.unit_price}}</td>
+        <td>{{order.seller_fname}} {{order.seller_lname}}</td>
+        <td>{% if order.fulfill_by_seller %} fulfilled by seller on {{order.fulfill_time}}
+          {% else %} unfulfilled yet 
+          {% endif %}
+        </td>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+The total price of this order is <span style="color: rgb(255, 0, 0);"> {{total_price[0][0]}}. </span>
+<br><br>
+<a class="btn btn-secondary" href="{{ url_for('users.order') }}" role="button">Back to last page</a>
+<a class="btn btn-secondary" href="{{ url_for('index.index') }}" role="button">Back to main page</a>
+{% endblock %}

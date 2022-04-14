@@ -24,7 +24,7 @@ from .models.product import Product, Product2
 from .models.seller_purchase import Seller_purchase
 from .models.cart import Cart
 from .models.social import SellerReview
-from .models.order import Order
+from .models.order import Order, Detailed_Order
 
 import itertools
 import datetime
@@ -551,7 +551,7 @@ def fulfilled(id: int):
                 flash('Not enough inventory for this order. To fulfill this order, please alter the inventory in the items on sale page.')
                 return redirect(url_for('users.fulfilled', id = id))
         else:
-            flash('Invalid Input. To fulfill this order, input "f" blow!')
+            flash('Invalid Input. To fulfill this order, input "f" above!')
             return redirect(url_for('users.fulfilled', id = id))
     return render_template('order_fulfilled.html', 
         title='order_fulfilled', form=form, avail_history=avail_history)
@@ -616,6 +616,19 @@ def checkout():
         current_user.is_current_seller = True
     # TO DO: redirect to order page
     if Cart.checkout(current_user.id):
-        return redirect(url_for('index.index'))
+        return redirect(url_for('users.order'))
     else:
         return redirect(url_for('users.cart'))
+
+
+@bp.route('/detailed_order_buyer/<int:order_id>', methods = ['GET', 'POST'])
+def detailed_order_buyer(order_id: int):
+    if Seller.is_seller(current_user.id):
+        current_user.is_current_seller = True
+    purchase_time = Order.get_purchase_time(order_id)
+    total_price = Order.get_total_price(order_id)
+    if current_user.is_authenticated:
+        order_info = Detailed_Order.get_all_by_oid(order_id)
+    else:
+        order_info = None
+    return render_template('order_details_buyer.html', order_info = order_info, order_id = order_id, purchase_time = purchase_time, total_price = total_price)

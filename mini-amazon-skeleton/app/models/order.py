@@ -13,21 +13,74 @@ class Order:
     def get_all_by_user (uid):
         order_infos = app.db.execute(
             "WITH temp AS ( "
-            "SELECT DISTINCT order_id, DISTINCT time_purchased "
+            "SELECT Orders.order_id, MIN(Purchases.time_purchased) AS time_purchased "
             "FROM Orders "
             "LEFT JOIN Purchases "
             "ON Orders.pur_id = Purchases.id "
+            "GROUP BY Orders.order_id "
             ") "
-            "SELECT Orders.order_id, COUNT "
+            "SELECT Orders.order_id, COUNT(*), SUM(CASE WHEN fulfill_by_seller THEN 1 ELSE 0 END), temp.time_purchased, SUM(quantity * unit_price) "
             "FROM Orders "
             "LEFT JOIN Purchases "
             "ON Orders.pur_id = Purchases.id "
             "LEFT JOIN temp "
             "ON Orders.order_id = temp.order_id "
-            "WHERE Orders.uid = : uid "
-            "GROUP BY Orders.order_id "
-            "ORDER BY Or temp.time_purchased ",
-            uid = uid 
+            "WHERE Orders.uid = :uid "
+            "GROUP BY Orders.order_id, temp.time_purchased "
+            "ORDER BY temp.time_purchased DESC"
+            ,uid = uid 
         )
         return [Order(*order_info) for order_info in order_infos]
 
+    @staticmethod 
+    def get_purchase_time (oid):
+        purchase_time = app.db.execute(
+            "SELECT MIN(Purchases.time_purchased) AS time_purchased "
+            "FROM Orders "
+            "LEFT JOIN Purchases "
+            "ON Orders.pur_id = Purchases.id "
+            "WHERE Orders.order_id = :oid ",
+            oid = oid)
+
+        return purchase_time
+
+    @staticmethod 
+    def get_total_price (oid):
+        total_price = app.db.execute(
+            "SELECT SUM(quantity * unit_price) "
+            "FROM Orders "
+            "LEFT JOIN Purchases "
+            "ON Orders.pur_id = Purchases.id "
+            "WHERE Orders.order_id = :oid ",
+            oid = oid)
+
+        return total_price
+
+class Detailed_Order: 
+    def __init__(self, p_name, quantity, unit_price, seller_lname, seller_fname, fulfill_by_seller, fulfill_time):
+        self.p_name = p_name
+        self.quantity = quantity
+        self.unit_price = unit_price
+        self.seller_lname = seller_lname
+        self.seller_fname = seller_fname
+        self.fulfill_by_seller = fulfill_by_seller
+        self.fulfill_time = fulfill_time
+
+    @staticmethod 
+    def get_all_by_oid (oid):
+        detailed_order = app.db.execute(
+            "SELECT Products.name, Purchases.quantity, Purchases.unit_price, Users.lastname, Users.firstname, Purchases.fulfill_by_seller, Order_fulfill.time_fulfilled "
+            "FROM Orders "
+            "LEFT JOIN Purchases "
+            "ON Orders.pur_id = Purchases.id "
+            "LEFT JOIN Products "
+            "ON Purchases.pid = Products.id "
+            "LEFT JOIN Users "
+            "ON Products.seller_id = Users.id "
+            "LEFT JOIN Order_fulfill "
+            "ON Order_fulfill.id = Purchases.id "
+            "WHERE Orders.order_id = :oid",
+            oid = oid
+        )
+        return [Detailed_Order(*order_info) for order_info in detailed_order]
+    
