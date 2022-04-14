@@ -11,6 +11,7 @@ from .models.product import Product
 from .models.purchase import Purchase
 
 from flask import Blueprint
+from .models.seller import Seller
 bp = Blueprint('search', __name__)
 
 # class SearchForm(FlaskForm):
@@ -21,6 +22,8 @@ bp = Blueprint('search', __name__)
 
 @bp.route("/search", methods=['GET', "POST"])
 def search():
+    if Seller.is_seller(current_user.id):
+        current_user.is_current_seller = True    
     # form = SearchForm()
     # type = form.type.data
     # search_message = form.search_message.data
