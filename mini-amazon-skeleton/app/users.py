@@ -353,6 +353,7 @@ class SaleForm(FlaskForm):
 
 @bp.route('/seller_post', methods=['GET', 'POST'])
 def seller_post():
+    current_user.is_current_seller = True
     form = SaleForm()
     is_seller = Seller.is_seller(current_user.id)
     if form.validate_on_submit():
@@ -373,6 +374,7 @@ def seller_post():
 
 @bp.route('/selling_history')
 def selling_history():
+    current_user.is_current_seller = True
     is_seller = Seller.is_seller(current_user.id)
     if current_user.is_authenticated:
         avail_history = Seller_purchase.get_all_by_seller(current_user.id)
@@ -382,6 +384,7 @@ def selling_history():
 
 @bp.route('/items_on_sale')
 def items_on_sale():
+    current_user.is_current_seller = True
     is_seller = Seller.is_seller(current_user.id)
     if current_user.is_authenticated:
         avail_history = Product2.items_on_sale(current_user.id)
@@ -395,6 +398,7 @@ class InvChangeForm(FlaskForm):
 
 @bp.route('/change_inv/<int:id>', methods = ['GET', 'POST'])
 def change_inv(id: int):
+    current_user.is_current_seller = True
     form = InvChangeForm()
     if form.validate_on_submit():
         Product.change_inv(id, form.inv.data)
@@ -407,6 +411,7 @@ class NameChangeForm(FlaskForm):
 
 @bp.route('/change_name/<int:id>', methods = ['GET', 'POST'])
 def change_name(id: int):
+    current_user.is_current_seller = True
     form = NameChangeForm()
     if form.validate_on_submit():
         Product2.change_name(id, form.name.data)
@@ -419,6 +424,7 @@ class DescrChangeForm(FlaskForm):
 
 @bp.route('/change_descr/<int:id>', methods = ['GET', 'POST'])
 def change_descr(id: int):
+    current_user.is_current_seller = True
     form = DescrChangeForm()
     if form.validate_on_submit():
         Product2.change_descr(id, form.descr.data)
@@ -431,6 +437,7 @@ class CateChangeForm(FlaskForm):
 
 @bp.route('/change_cate/<int:id>', methods = ['GET', 'POST'])
 def change_cate(id: int):
+    current_user.is_current_seller = True
     form = CateChangeForm()
     if form.validate_on_submit():
         Product2.change_cate(id, form.cate.data)
@@ -443,6 +450,7 @@ class PriceChangeForm(FlaskForm):
 
 @bp.route('/change_price/<int:id>', methods = ['GET', 'POST'])
 def change_price(id: int):
+    current_user.is_current_seller = True
     form = PriceChangeForm()
     if form.validate_on_submit():
         Product2.change_price(id, form.price.data)
@@ -455,6 +463,7 @@ class ImgChangeForm(FlaskForm):
 
 @bp.route('/change_img/<int:id>', methods = ['GET', 'POST'])
 def change_img(id: int):
+    current_user.is_current_seller = True
     form = ImgChangeForm()
     if form.validate_on_submit():
         f = form.file.data
@@ -476,6 +485,7 @@ class ProductRemoveForm(FlaskForm):
 
 @bp.route('/remove_items/<int:id>', methods = ['GET', 'POST'])
 def remove_items(id: int):
+    current_user.is_current_seller = True
     form = ProductRemoveForm()
     if form.validate_on_submit():
         if form.ans.data == "d":
@@ -489,6 +499,7 @@ def remove_items(id: int):
 
 @bp.route('/selling_items_history')
 def selling_items_history():
+    current_user.is_current_seller = True
     is_seller = Seller.is_seller(current_user.id)
     if current_user.is_authenticated:
         avail_history = Product.selling_items_history(current_user.id)
@@ -498,6 +509,7 @@ def selling_items_history():
 
 @bp.route('/detailed_order/<int:pid>', methods = ['GET', 'POST'])
 def detailed_order(pid: int):
+    current_user.is_current_seller = True
     p_name = Seller_purchase.get_product_name(pid)
     p_name = list(p_name[0])
     if current_user.is_authenticated:
@@ -516,6 +528,7 @@ class OrderFulfilledForm(FlaskForm):
 
 @bp.route('/fulfilled/<int:id>', methods = ['GET', 'POST'])
 def fulfilled(id: int):
+    current_user.is_current_seller = True
     form = OrderFulfilledForm()
     avail_history = Seller_purchase.get_all_by_purchaseid(current_user.id, id)
     if form.validate_on_submit():
@@ -565,3 +578,12 @@ def changeCartQuantity(pid: int):
         Cart.change_cart(current_user.id, pid, quantity=form.quantity.data)
         return redirect(url_for('users.cart'))
     return render_template('cart_quantity.html', form=CartChangeForm(), pid=pid)
+
+
+# @bp.route('/order')
+# def items_on_sale():
+#     if current_user.is_authenticated:
+#         avail_history = Product2.items_on_sale(current_user.id)
+#     else:
+#         avail_history = None
+#     return render_template('items_on_sale.html', avail_history = avail_history)

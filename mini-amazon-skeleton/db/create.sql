@@ -72,6 +72,7 @@ CREATE TABLE Sales (
 );
 
 CREATE TABLE Order_fulfill (
+    order_id INT NOT NULL,
     id INT REFERENCES Purchases(id),
     time_fulfilled timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC')
 );

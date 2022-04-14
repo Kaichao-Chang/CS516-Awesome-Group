@@ -44,23 +44,25 @@
           aria-haspopup="true" aria-expanded="false"></button>
         <div class="dropdown-menu">
           <a class="dropdown-item" href="{{ url_for('users.cart') }}">My Cart</a>
+          
           <a class="dropdown-item" href="{{ url_for('users.account') }}">Update My Profile</a>
           <a class="dropdown-item" href="{{ url_for('users.password') }}">Change My Password</a>
           <a class="dropdown-item" href="{{ url_for('users.balance') }}">Update My Account Balance</a>
           <a class="dropdown-item" href="{{ url_for('users.public_view_user', id=current_user.id) }}">Public View For The User</a>
-
-          <a class="dropdown-item" href="{{ url_for('users.seller_register') }}">Seller Registration</a>
-          <a class="dropdown-item" href="{{ url_for('users.seller_post') }}">Post Item(s)</a>
-          <a class="dropdown-item" href="{{ url_for('users.items_on_sale') }}">Items on Sale</a>
-
-          <a class="dropdown-item" href="{{ url_for('users.selling_history') }}">History of Selling Orders</a>
-          <a class="dropdown-item" href="{{ url_for('users.selling_items_history') }}">History of Selling Items</a>
+          {% if current_user.is_current_seller %} 
+          <a class="dropdown-item" href="{{ url_for('users.seller_post') }}"><span style="color: rgb(0, 17, 255);">Post Item(s)</span> </a>
+          <a class="dropdown-item" href="{{ url_for('users.items_on_sale') }}"><span style="color: rgb(0, 17, 255);">Items on Sale</span></a>
+          <a class="dropdown-item" href="{{ url_for('users.selling_history') }}"><span style="color: rgb(0, 17, 255);">History of Selling Orders</span></a>
+          <a class="dropdown-item" href="{{ url_for('users.selling_items_history') }}"><span style="color: rgb(0, 17, 255);">History of Selling Items</span> </a>
+          {% else %}
+          <a class="dropdown-item" href="{{ url_for('users.seller_register') }}"><span style="color: rgb(0, 17, 255);">Seller Registration</span></h2></a>
+          {% endif %}
           <a class="dropdown-item" href="{{ url_for('social.my_product_reviews') }}">My Product Reviews</a>
           <a class="dropdown-item" href="{{ url_for('social.my_seller_reviews') }}">My Seller Reviews</a>
           <a class="dropdown-item" href="{{ url_for('users.logout') }}">Logout</a>         
         </div>
         <div class="text-center">
-        {% if current_user.is_seller %} You have registered as a seller! {% endif %} 
+        {% if current_user.is_current_seller %}<span style="color: rgb(0, 17, 255);">You have registered as a seller!</span> {% endif %} 
         </div>
         {% else %}
         <a href="{{ url_for('users.login') }}" type="button" class="btn btn-dark">
