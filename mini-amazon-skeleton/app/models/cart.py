@@ -1,4 +1,5 @@
 from flask import current_app as app
+from random import randint
 
 class Cart():
 
@@ -49,14 +50,19 @@ From Cart
 LEFT JOIN Products ON Products.id = Cart.pid
 Where Cart.uid = :uid
 """, uid=uid)
-            print("look here",values)
-            print("flag")
+            oid = randint(0, 2147483647)
             for row in values:
-                print("row",row)
-                app.db.execute("""
-    INSERT INTO Purchases (uid, pid, seller_id, quantity, unit_price)
-    VALUES (:uid, :pid, :seller_id, :quantity, :unit_price)
+                pid = app.db.execute("""
+INSERT INTO Purchases (uid, pid, seller_id, quantity, unit_price)
+VALUES (:uid, :pid, :seller_id, :quantity, :unit_price)
+RETURNING id;
     """, uid=row.uid, pid=row.pid, seller_id=row.seller_id, quantity=row.quantity, unit_price=row.price)
+
+                
+                app.db.execute("""
+INSERT INTO Orders
+VALUES(:oid, :pid, :uid)
+""", oid=oid, pid=pid[0][0], uid=row.uid)
             app.db.execute("""
 DELETE FROM Cart
 Where uid = :uid
