@@ -24,6 +24,7 @@ from .models.product import Product, Product2
 from .models.seller_purchase import Seller_purchase
 from .models.cart import Cart
 from .models.social import SellerReview
+from .models.order import Order
 
 import itertools
 import datetime
@@ -599,16 +600,20 @@ def changeCartQuantity(pid: int):
     return render_template('cart_quantity.html', form=CartChangeForm(), pid=pid)
 
 
-# @bp.route('/order')
-# def items_on_sale():
-#     if current_user.is_authenticated:
-#         avail_history = Product2.items_on_sale(current_user.id)
-#     else:
-#         avail_history = None
-#     return render_template('items_on_sale.html', avail_history = avail_history)
+@bp.route('/order')
+def order():
+    if Seller.is_seller(current_user.id):
+        current_user.is_current_seller = True
+    if current_user.is_authenticated:
+        order_info = Order.get_all_by_user(current_user.id)
+    else:
+        order_info  = None
+    return render_template('order_info.html', order_info = order_info)
 
 @bp.route('/checkout', methods = ['GET', 'POST'])
 def checkout():
+    if Seller.is_seller(current_user.id):
+        current_user.is_current_seller = True
     # TO DO: redirect to order page
     if Cart.checkout(current_user.id):
         return redirect(url_for('index.index'))

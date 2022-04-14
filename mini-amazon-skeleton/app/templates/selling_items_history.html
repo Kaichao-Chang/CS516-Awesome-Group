@@ -27,8 +27,8 @@
           / {{ sell_history.product_overall_star }} Stars
         </td>
         <td>{{sell_history.inv}} </a> </td>
-        <td>{% if sell_history.available %} Still Selling 
-            {% if sell_history.inv == 0 %} Sold Out {% endif %}
+        <td>{% if sell_history.available %}
+            {% if sell_history.inv == 0 %} Sold Out {% else %} Still Selling  {% endif %}
             {% else %} Already Deleted by You
             {% endif %}
           </a> </td>

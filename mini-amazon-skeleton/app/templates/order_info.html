@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>My orders</h2>
+{% if is_seller %}
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Product Name</th>
+      <th scope="col">Product Image</th>
+      <th scope="col">Product Description</th>
+      <th scope="col">Product Category</th>
+      <th scope="col">Price</th>
+      <th scope="col">Overall Star</th>
+      <th scope="col">Inventory</th>
+      <th scope="col">Delete Items</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+  </tbody>
+</table>
+{% else %}
+    <div class="text-center">
+      <p> <font size= 8> You need to sign up for a seller before viewing Items on Sale!</font> </p>
+      </div>
+    <p>
+    {% endif %} 
+<br><br>
+<a class="btn btn-secondary" href="{{ url_for('index.index') }}" role="button">Back to main page</a>
+{% endblock %}
