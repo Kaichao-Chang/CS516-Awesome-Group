@@ -83,7 +83,7 @@ class Seller_purchase:
         return p_name
 
     @staticmethod
-    def order_fulfill(id):
+    def order_fulfill(id, uid):
         app.db.execute(
             "UPDATE purchases "
             "SET fulfill_by_seller = true "
@@ -96,6 +96,33 @@ class Seller_purchase:
             "VALUES (:id, now()::timestamp)",
             id = id)
         
+        old_balance = app.db.execute(
+            "SELECT balance "
+            "FROM Users "
+            "WHERE id = :uid ",
+            uid = uid
+        )
+
+        old_balance = old_balance[0][0]
+
+        earn = app.db.execute(
+            "SELECT quantity* unit_price "
+            "FROM Purchases "
+            "WHERE id = :id ",
+            id = id
+        )
+
+        earn = earn[0][0]
+        new_balance = old_balance + earn 
+
+        app.db.execute (
+            "UPDATE Users "
+            "SET balance = :new_balance "
+            "WHERE id = :uid ",
+            new_balance = new_balance,
+            uid = uid
+        )
+
         product_id = app.db.execute(
             "SELECT pid "
             "FROM Purchases "

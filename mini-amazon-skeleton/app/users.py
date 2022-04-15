@@ -484,7 +484,7 @@ def fulfilled(id: int):
     if form.validate_on_submit():
         if form.ans.data == "f":
             if Seller_purchase.enough_inv(id):
-                Seller_purchase.order_fulfill(id)
+                Seller_purchase.order_fulfill(id, current_user.id)
                 return redirect(url_for('users.selling_history'))
             else:
                 flash('Not enough inventory for this order. To fulfill this order, please alter the inventory in the items on sale page.')
