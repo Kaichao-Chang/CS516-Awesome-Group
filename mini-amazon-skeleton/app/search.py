@@ -35,13 +35,12 @@ def search():
 
     product = Search.search_product(search_msg, cate, order)
 
-    if current_user.is_authenticated:
-        purchases = Purchase.get_all_by_uid_since(
-            current_user.id, datetime.datetime(1980, 9, 14, 0, 0, 0))
-    else:
-        purchases = None
-    return render_template('search_result.html', search_msg=search_msg, search_catagory=cate, orderby=order, match_products=product,
-                           purchase_history=purchases,)
+    # if current_user.is_authenticated:
+    #     purchases = Purchase.get_all_by_uid_since(
+    #         current_user.id, datetime.datetime(1980, 9, 14, 0, 0, 0))
+    # else:
+    #     purchases = None
+    return render_template('search_result.html', search_msg=search_msg, search_catagory=cate, orderby=order, match_products=product)
 
 @bp.route("/search_order", methods=['GET', "POST"])
 def search_order():
