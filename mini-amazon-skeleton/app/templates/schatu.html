@@ -5,7 +5,7 @@
 <h1>Chat with Buyer</h1>
 {% for message in msg %}
 <p>{%if message.from_user %} <span style="color: rgb(0, 225, 255);"> Buyer </span> {{message.time_of_message}}</p> 
-{% else %} <span style="color: rgb(0, 255, 0);"> You </span> {% endif %}
+{% else %} <span style="color: rgb(0, 255, 0);"> You </span> {{message.time_of_message}} {% endif %}
 <p>
   {{message.msg}}
 </p>
