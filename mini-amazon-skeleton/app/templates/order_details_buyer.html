@@ -10,6 +10,7 @@
       <th scope="col">Product Unit Price</th>
       <th scope="col">Seller Name </th>
       <th scope="col">Fulfillment Status</th>
+      <th scope="col">Chat with Seller</th>
     </tr>
   </thead>
 
@@ -24,6 +25,8 @@
           {% else %} unfulfilled yet 
           {% endif %}
         </td>
+        <td> <a href="{{ url_for('users.uchats', pur_id=order.pur_id) }}">
+          Messages
         </td>
       </tr>
     {% endfor %}

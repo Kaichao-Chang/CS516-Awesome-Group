@@ -95,6 +95,7 @@ CREATE TABLE Orders (
 CREATE TABLE Messages (
     uid INT NOT NULL,
     seller_id INT NOT NULL,
+    pur_id INT NOT NULL,
     msg VARCHAR(255),
     from_user BOOLEAN,
     time_of_message TIMESTAMPTZ DEFAULT Now()

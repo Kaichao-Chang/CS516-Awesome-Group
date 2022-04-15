@@ -305,3 +305,19 @@ class Seller_purchase:
         plt.close(fig)
 
         return filename
+
+    @staticmethod
+    def draw_line_chart(id):
+
+  
+        quantity = app.db.execute(
+            "SELECT COALESCE(quantity, 0) "
+            "FROM Purchases "
+            "WHERE pid = :id "
+            "AND fulfill_by_seller = TRUE "
+            "ORDER BY time_purchased DESC",
+            id = id)
+
+        draw = len(quantity) > 0
+
+        return draw

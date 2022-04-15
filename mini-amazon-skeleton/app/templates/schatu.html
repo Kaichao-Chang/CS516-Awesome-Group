@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Chat with Buyer</h1>
+{% for message in msg %}
+<p>{%if message.from_user %} <span style="color: rgb(0, 225, 255);"> Buyer </span> {{message.time_of_message}}</p> 
+{% else %} <span style="color: rgb(0, 255, 0);"> You </span> {% endif %}
+<p>
+  {{message.msg}}
+</p>
+{% endfor %}
+<form action="" method="post">
+  {{ form.hidden_tag() }}
+   <p>
+    {{ form.message.label }}<br/>
+    {{ form.message(size=32) }}<br/>
+    {% for error in form.message.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+    <p>{{ form.submit() }}</p>
+  </p>
+  <a class="btn btn-secondary" href="{{ url_for('users.selling_history') }}" role="button">Back to last page</a>
+  <a class="btn btn-secondary" href="{{ url_for('index.index') }}" role="button">Back to main page</a>
+</form>
+
+{% endblock %}

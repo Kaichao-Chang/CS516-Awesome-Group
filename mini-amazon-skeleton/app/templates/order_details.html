@@ -36,7 +36,8 @@
 <img src="{{ url_for('static', filename='/analysis_pic/' + file_name_1 + '.png') }}" />
 {% if running_low_1 %} <span style="color: rgb(255, 0, 0);">The quantity of unfulfilled order is larger than the remaining inventory. Please replenish inventory. </span> 
 {% endif %}
-<img src="{{ url_for('static', filename='/analysis_pic/' + file_name_2 + '.png') }}" />
+{% if draw %} <img src="{{ url_for('static', filename='/analysis_pic/' + file_name_2 + '.png') }}" />
+{% endif %}
 <br><br>
 <a class="btn btn-secondary" href="{{ url_for('users.selling_items_history') }}" role="button">Back to last page</a>
 <a class="btn btn-secondary" href="{{ url_for('index.index') }}" role="button">Back to main page</a>

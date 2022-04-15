@@ -24,6 +24,7 @@ from .models.seller_purchase import Seller_purchase
 from .models.cart import Cart
 from .models.social import SellerReview
 from .models.order import Order, Detailed_Order
+from .models.chat import Chat
 
 import itertools
 import datetime
@@ -278,7 +279,7 @@ def seller_register():
             Seller.seller_register(current_user.id)
             return redirect(url_for('index.index'))
         else:
-            flash('Invalid Input. To register, input "y" blow!')
+            flash('Invalid Input. To register, input "y" above!')
             return redirect(url_for('users.seller_register'))
     return render_template('seller_register.html', 
         title='Seller_Register', form=form, is_seller = is_seller)
@@ -458,13 +459,14 @@ def detailed_order(pid: int):
     file_name_1 = Seller_purchase.bar_chart(pid)
     running_low_1 =  Seller_purchase.running_low_1(pid)
     file_name_2 = Seller_purchase.line_chart(pid)
+    draw = Seller_purchase.draw_line_chart(pid)
     if current_user.is_authenticated:
         avail_history = Seller_purchase.get_all_by_product(pid, current_user.id)
     else:
         avail_history = None
     return render_template('order_details.html', avail_history = avail_history, 
         p_name = p_name[0], file_name = file_name, runing_low = runing_low, file_name_1 = file_name_1, 
-        running_low_1 = running_low_1, file_name_2 = file_name_2)
+        running_low_1 = running_low_1, file_name_2 = file_name_2, draw = draw)
 
 class OrderFulfilledForm(FlaskForm):
     ans = StringField('Are you sure you want to fuifilled this following order? (input "f" in the block below to fulfill)', validators=[DataRequired()])
@@ -569,3 +571,33 @@ def detailed_order_buyer(order_id: int):
     else:
         order_info = None
     return render_template('order_details_buyer.html', order_info = order_info, order_id = order_id, purchase_time = purchase_time, total_price = total_price)
+
+class ChatForm(FlaskForm):
+    message = StringField('Leave messages to seller', validators=[DataRequired()])
+    submit = SubmitField('Send')
+
+@bp.route('/uchats/<int:pur_id>', methods = ['GET', 'POST'])
+def uchats(pur_id: int):
+    if Seller.is_seller(current_user.id):
+        current_user.is_current_seller = True
+    form = ChatForm()
+    msg = Chat.get_all(pur_id)
+    order_id = Order.get_order_id(pur_id)
+    if form.validate_on_submit():
+        Chat.new_message(current_user.id, pur_id, form.message.data)
+        return redirect(url_for('users.uchats', pur_id = pur_id))
+    return render_template('uchats.html', form=ChatForm(), msg = msg, order_id = order_id)
+class ChatForm2(FlaskForm):
+    message = StringField('Leave messages to buyer', validators=[DataRequired()])
+    submit = SubmitField('Send')
+
+@bp.route('/schatu/<int:pur_id>', methods = ['GET', 'POST'])
+def schatu(pur_id: int):
+    if Seller.is_seller(current_user.id):
+        current_user.is_current_seller = True
+    form = ChatForm2()
+    msg = Chat.get_all(pur_id)
+    if form.validate_on_submit():
+        Chat.new_message2(current_user.id, pur_id, form.message.data)
+        return redirect(url_for('users.schatu', pur_id = pur_id))
+    return render_template('schatu.html', form=ChatForm2(), msg = msg)

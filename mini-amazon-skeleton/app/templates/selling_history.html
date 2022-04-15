@@ -31,6 +31,7 @@
       <th scope="col">Buyer Address</th>
       <th scope="col">Time Buyer Placed Order</th>
       <th scope="col">Fulfillment Status</th>
+      <th scope="col">Chat with Buyer</th>
     </tr>
   </thead>
 
@@ -47,6 +48,8 @@
           {% else %} This order is not fulfilled yet.  <a href="{{ url_for('users.fulfilled', id=avail.id) }}"> Fulfill Now</a>
           {% endif %}
         </td>
+        <td> <a href="{{ url_for('users.schatu', pur_id=avail.id) }}">
+          Messages
       </tr>
     {% endfor %}
   </tbody>
