@@ -22,8 +22,9 @@ bp = Blueprint('search', __name__)
 
 @bp.route("/search", methods=['GET', "POST"])
 def search():
-    if Seller.is_seller(current_user.id):
-        current_user.is_current_seller = True    
+    if current_user.is_authenticated:
+        if Seller.is_seller(current_user.id):
+            current_user.is_current_seller = True    
     # form = SearchForm()
     # type = form.type.data
     # search_message = form.search_message.data

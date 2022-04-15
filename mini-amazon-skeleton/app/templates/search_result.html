@@ -48,7 +48,7 @@
   <tbody>
     {% for product in match_products%}
     <tr>
-      <th scope="row"><img src="{{ url_for('static', filename='/pic/' + product.img) }}" /> </th>
+      <th scope="row"><img src="{{ url_for('static', filename='/pic/' + product.img) }}" width="100"/> </th>
       <td><a href="{{ url_for('product_page.page', product_id=product.id) }}">{{product.name}}</a></td>
       <td>{{product.price}}</td>
       <td>{{product.seller_name}} </td>
