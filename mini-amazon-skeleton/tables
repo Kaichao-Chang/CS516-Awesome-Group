@@ -1,14 +1,11 @@
 Users({id}, email, password, firstname, lastname, address, balance)
-Products(pid, name, price, available, seller_id, overall_star, cate, desc, inv)
-Purchases(id, uid, pid, price, quantity, time_purchased)
-ProductReviews(id, uid, pid, content)
-SellerReviews(id, customer_id, seller_id, content)
-Sellers(id, uid)
+Products(id, name, price, available, seller_id, overall_star, cate, descr, inv, img)
+Purchases(id, uid, pid, seller_id, quantity, unit_price, fulfill_by_seller, time_purchased)
+ProductReviews(id, uid, pid, content, star, upvote, created_at)
+SellerReviews(id, customer_id, seller_id, content, star, upvote, created_at)
+Sellers(id, uid, overall_star)
 Sales(id, uid, pid, time_purchased, sale_status)
-
-Intend to add
-Cart(customer_id, seller_id, product_id, quantity)
-
-Intend to change
-Product add image(blob)
-ProductReviews add rating
+Order_fulfill(id, time_fulfilled)
+Cart(id, uid, pid, quantity)
+Orders(order_id, pur_id, uid, completed_status, placed_datetime)
+Messages(uid, seller_id, pur_id, msg, from_user, time_of_message)
