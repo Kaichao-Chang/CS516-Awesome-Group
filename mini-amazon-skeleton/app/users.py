@@ -96,8 +96,7 @@ def logout():
     return redirect(url_for('index.index'))
 
 
-
-############################################### Update ###############################################
+####################### The followings are to Update Account ########################
 class UpdateProfileForm(FlaskForm): 
     firstname = StringField('Your First Name', validators=[DataRequired('Please enter your first name here:')]) 
     lastname = StringField('Your Last Name', validators=[DataRequired('Please enter your last name here:')])
@@ -146,7 +145,7 @@ def password():
     return render_template('change_password.html', title='Password', form=form)
         
 
-############# Balance functions #################
+##################### The follwings are to deal with Balance ##########################
 class BalanceForm(FlaskForm):
     topup = DecimalField('deposit', validators=[], default=0)
     withdraw = DecimalField('withdraw', validators=[], default=0)
@@ -166,15 +165,12 @@ def balance():
     return render_template('balance.html', title='Balance', form=form, your_balance=User.get_balance(current_user.id))
 
 
-
-##################### The following is a function for purchase history ####################
-
+##################### The followings are for purchase history ####################
 # I just use the following function to split the date variable into year, month, and day:
 def Date_Split(date1, date2):
     date1_year, date1_month, date1_day = list(map(int, date1.split("-")))
     date2_year, date2_month, date2_day = list(map(int, date2.split("-")))
     return [date1_year, date1_month, date1_day], [ date2_year, date2_month, date2_day ]
-
 
 # The following function is to filter of purchase history
 @bp.route('/purchase_history', methods=['GET', 'POST'])
@@ -240,15 +236,7 @@ def purchase_history():
                                 since=since,
                                 to=today)
 
-
-
-
-
-
-
-
-
-############# Public View of User functions #################
+################# The following is for Public View of User #################
 @bp.route('/public_view_user/<int:id>')
 def public_view_user(id):
     if Seller.is_seller(current_user.id):
@@ -258,7 +246,7 @@ def public_view_user(id):
 
 
 
-############################### Celia added some functions for Part 1 above this line #################################
+######################### Celia added some functions for Part 1 above this line (Plz don't get confused) #############################
 
 class SellerRegistrationForm(FlaskForm):
     seller_register =  StringField('Are you willing to become a seller in our website and compile with our policies? (input "y" in the block below to sign up)', 
