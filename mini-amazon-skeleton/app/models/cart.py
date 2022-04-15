@@ -50,6 +50,8 @@ From Cart
 LEFT JOIN Products ON Products.id = Cart.pid
 Where Cart.uid = :uid
 """, uid=uid)
+            total_price = sum(value.price*value.quantity for value in values)
+            print(total_price)
             oid = randint(0, 2147483647)
             for row in values:
                 pid = app.db.execute("""
@@ -67,4 +69,9 @@ VALUES(:oid, :pid, :uid)
 DELETE FROM Cart
 Where uid = :uid
 """, uid=uid)
+            app.db.execute("""
+UPDATE Users
+SET balance = balance + :change
+WHERE id = :id
+""", id=uid, change=-total_price)
             return True
