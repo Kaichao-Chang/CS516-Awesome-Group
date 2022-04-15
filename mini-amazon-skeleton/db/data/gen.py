@@ -128,7 +128,7 @@ def gen_seller_reviews(max_num_seller_reviews, available_uids):
 
 def generate_all_data():
     num_users = 5
-    num_products = 10
+    num_products = 100
     num_purchases = 1000
     max_num_product_reviews = 1000
     max_num_seller_reviews = 1000
