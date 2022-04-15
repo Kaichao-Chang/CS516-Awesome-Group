@@ -4,7 +4,7 @@ from itertools import product
 
 from faker import Faker
 from werkzeug.security import generate_password_hash
-from random import randrange, seed, choice
+from random import randrange, seed, choice, randint
 
 Faker.seed(0)
 fake = Faker()
@@ -36,7 +36,7 @@ def gen_users(num_users):
             balance = 1000.00
             writer.writerow([uid, email, password, firstname, lastname, address, balance])
             available_uids.append(uid)
-        print(f"{num_users} generated")
+            print(f"{num_users} generated")
     return available_uids
 
 
@@ -46,24 +46,27 @@ def gen_products(num_products, avaliable_uid):
         writer = get_csv_writer(f)
         print("Products...", end=" ", flush=True)
 
-        for pid in range(num_products):
+        pid = 0
+        while pid < num_products:
             if pid % 100 == 0:
                 print(f"{pid}", end=" ", flush=True)
             name = fake.sentence(nb_words=4)[:-1]
-            price = f"{str(fake.random_int(max=500))}.{fake.random_int(max=99):02}"
-            available = fake.random_element(elements=("true", "false"))
-            if available == "true":
-                available_pids.append(pid)
-            seller_id = fake.random_element(elements=avaliable_uid)
-            overall_star = 0
-            inv = fake.random_int(1, 20)
-            cate = choice(["A","B","C"])
-            desc = fake.sentence(nb_words=4)[:-1]
-            img = str(randrange(10))+'.jpg'
+            for _ in range(randint(0, 3)):
+                price = f"{str(fake.random_int(max=500))}.{fake.random_int(max=99):02}"
+                available = fake.random_element(elements=("true", "false"))
+                if available == "true":
+                    available_pids.append(pid)
+                seller_id = fake.random_element(elements=avaliable_uid)
+                overall_star = 0
+                inv = fake.random_int(1, 20)
+                cate = choice(["A","B","C"])
+                desc = fake.sentence(nb_words=4)[:-1]
+                img = str(randrange(10))+'.jpg'
 
-            writer.writerow(
-                [pid, name, price, available, seller_id, overall_star, cate, desc, inv, img])
-        print(f"{num_products} generated; {len(available_pids)} available")
+                writer.writerow(
+                    [pid, name, price, available, seller_id, overall_star, cate, desc, inv, img])
+                print(f"{num_products} generated; {len(available_pids)} available")
+                pid += 1
 
     return available_pids
 

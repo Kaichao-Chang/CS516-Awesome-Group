@@ -500,8 +500,9 @@ class CartChangeForm(FlaskForm):
 
 @bp.route('/addToCart/<int:pid>', methods = ['GET', 'POST'])
 def addToCart(pid: int):
-    if Seller.is_seller(current_user.id):
-        current_user.is_current_seller = True
+    if current_user.is_authenticated:
+        if Seller.is_seller(current_user.id):
+            current_user.is_current_seller = True
     if current_user.is_authenticated:
         Cart.add_cart(current_user.id, pid)
         return redirect(url_for('users.changeCartQuantity', form=CartChangeForm(), pid=pid))

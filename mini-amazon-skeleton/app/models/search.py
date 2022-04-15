@@ -44,7 +44,6 @@ AND available = True
                         sql += "ORDER BY price"
                 elif order == 2:
                         sql += "ORDER BY price DESC"
-                print(sql)
                 return app.db.execute(sql)
 
 class Order_Search:

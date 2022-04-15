@@ -9,7 +9,8 @@
       <th scope="col">Description</th>
       <th scope="col">Seller</th>
       <th scope="col">Price</th>
-      <th scope="col">Quantity</th>
+      <th scope="col">Product Review</th>
+      <th scope="col">Quantity Avaliable</th>
       <th scope="col">Add to Cart</th>
     </tr>
   </thead>
@@ -20,6 +21,11 @@
       <td>{{product.descr}} </td>
       <td>{{product.seller_name}} </td>
       <td>{{product.price}}</td>
+      <td>
+        <a href="{{ url_for('social.product_reviews', product_id=product.id) }}">
+          {{ product.overall_star }} Stars
+        </a>
+      </td>
       <td>{{product.inv}}</td>
       <td><a href="{{ url_for('users.addToCart', pid=product.id) }}">add to cart</a></td>
     

@@ -37,11 +37,11 @@
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
-      <th scope="col">Product ID</th>
+      <th scope="col">Product Picture</th>
       <th scope="col">Product Name</th>
+      <th scope="col">Product Description</th>
       <th scope="col">Price</th>
       <th scope="col">Seller</th>
-      <th scope="col">Seller Review</th>
       <th scope="col">Product Review</th>
     </tr>
   </thead>
@@ -50,15 +50,13 @@
     <tr>
       <th scope="row"><img src="{{ url_for('static', filename='/pic/' + product.img) }}" width="100"/> </th>
       <td><a href="{{ url_for('product_page.page', product_id=product.id) }}">{{product.name}}</a></td>
+      <td>{{product.descr}}</td>
       <td>{{product.price}}</td>
       <td>{{product.seller_name}} </td>
-      <td><a href="{{ url_for('social.seller_reviews', seller_id=product.seller_id) }}"> {{ product.n_seller_reviews }} Reviews </a> 
-        / {{ product.seller_overall_star }} Stars</td>
       <td>
         <a href="{{ url_for('social.product_reviews', product_id=product.id) }}">
-          {{ product.n_product_reviews }} Reviews
+          {{ product.overall_star }} Stars
         </a>
-        / {{ product.product_overall_star }} Stars
       </td>
     </tr>
     {% endfor %}

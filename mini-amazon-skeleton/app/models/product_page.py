@@ -12,7 +12,7 @@ Where id = :id
         name = name[0][0]
         return app.db.execute(
                      '''
-SELECT Products.id as id, price, descr, CONCAT(Users.firstname, ' ', Users.lastname) AS seller_name, inv, img
+SELECT Products.*, CONCAT(Users.firstname, ' ', Users.lastname) AS seller_name
 FROM Products
 LEFT JOIN Users ON Products.seller_id = Users.id
 WHERE available = True and name = :name
