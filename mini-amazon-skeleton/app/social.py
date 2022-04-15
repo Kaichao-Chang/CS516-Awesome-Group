@@ -8,7 +8,7 @@ social_bp = Blueprint("social", __name__, url_prefix="/social/")
 
 @social_bp.route("/product_reviews/<int:product_id>", methods=['GET', "POST"])
 def product_reviews(product_id: int):
-    if Seller.is_seller(current_user.id):
+    if current_user.is_authenticated and Seller.is_seller(current_user.id):
         current_user.is_current_seller = True
     if request.method == 'POST' and current_user.is_authenticated:
         review_type = request.form.get('review-type')
@@ -35,7 +35,7 @@ def product_reviews(product_id: int):
 
 @social_bp.route("/seller_reviews/<int:seller_id>", methods=['GET', "POST"])
 def seller_reviews(seller_id: int):
-    if Seller.is_seller(current_user.id):
+    if current_user.is_authenticated and Seller.is_seller(current_user.id):
         current_user.is_current_seller = True
     if request.method == 'POST' and current_user.is_authenticated:
         review_type = request.form.get('review-type')
@@ -63,7 +63,7 @@ def seller_reviews(seller_id: int):
 
 @social_bp.route("/my_product_reviews")
 def my_product_reviews():
-    if Seller.is_seller(current_user.id):
+    if current_user.is_authenticated and Seller.is_seller(current_user.id):
         current_user.is_current_seller = True
     user_id = current_user.id
     reviews = ProductReview.get_reviews_of_one_user(user_id)
@@ -72,7 +72,7 @@ def my_product_reviews():
 
 @social_bp.route("/my_seller_reviews")
 def my_seller_reviews():
-    if Seller.is_seller(current_user.id):
+    if current_user.is_authenticated and Seller.is_seller(current_user.id):
         current_user.is_current_seller = True
     user_id = current_user.id
     reviews = SellerReview.get_reviews_of_one_user(user_id)

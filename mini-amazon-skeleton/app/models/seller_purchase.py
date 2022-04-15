@@ -52,7 +52,6 @@ class Seller_purchase:
             "ORDER BY time_purchased DESC",
                               uid=uid,
                               purchases_id = purchases_id)
-        print(rows)
         return [Seller_purchase(*row) for row in rows]
 
     @staticmethod
@@ -71,7 +70,6 @@ class Seller_purchase:
             "ORDER BY time_purchased DESC",
                               uid=uid,
                               pid = pid)
-        print(rows)
         return [Seller_purchase(*row) for row in rows]
 
     @staticmethod
@@ -85,7 +83,7 @@ class Seller_purchase:
         return p_name
 
     @staticmethod
-    def order_fulfill(id):
+    def order_fulfill(id, uid):
         app.db.execute(
             "UPDATE purchases "
             "SET fulfill_by_seller = true "
@@ -98,6 +96,33 @@ class Seller_purchase:
             "VALUES (:id, now()::timestamp)",
             id = id)
         
+        old_balance = app.db.execute(
+            "SELECT balance "
+            "FROM Users "
+            "WHERE id = :uid ",
+            uid = uid
+        )
+
+        old_balance = old_balance[0][0]
+
+        earn = app.db.execute(
+            "SELECT quantity* unit_price "
+            "FROM Purchases "
+            "WHERE id = :id ",
+            id = id
+        )
+
+        earn = earn[0][0]
+        new_balance = old_balance + earn 
+
+        app.db.execute (
+            "UPDATE Users "
+            "SET balance = :new_balance "
+            "WHERE id = :uid ",
+            new_balance = new_balance,
+            uid = uid
+        )
+
         product_id = app.db.execute(
             "SELECT pid "
             "FROM Purchases "
@@ -176,7 +201,6 @@ class Seller_purchase:
  
 
         sizes = [inv[0][0], quantity[0][0]]
-        print(sizes)
         explode = (0, 0.1)  
         fig, ax = plt.subplots()
         ax.pie(sizes, explode=explode, labels=labels, autopct= '%1.1f%%', startangle=90)
@@ -277,3 +301,50 @@ class Seller_purchase:
         r_l = inv[0][0] < ufquantity[0][0]
 
         return r_l
+
+    @staticmethod
+    def line_chart(id):
+
+  
+        quantity = app.db.execute(
+            "SELECT COALESCE(quantity, 0) "
+            "FROM Purchases "
+            "WHERE pid = :id "
+            "AND fulfill_by_seller = TRUE "
+            "ORDER BY time_purchased DESC",
+            id = id)
+
+        time = app.db.execute(
+            "SELECT time_purchased "
+            "FROM Purchases "
+            "WHERE pid = :id "
+            "AND fulfill_by_seller = TRUE "
+            "ORDER BY time_purchased DESC",
+            id = id
+        )
+        fig = plt.figure()
+        plt.plot(time, quantity, 'b*-', label = 'Order Fuifullment Time Trend')
+        plt.legend()
+        filename = str(uuid.uuid4())
+        fig.savefig(os.path.join(
+            app.instance_path,'../app/static/analysis_pic/' , filename
+        ))
+        plt.close(fig)
+
+        return filename
+
+    @staticmethod
+    def draw_line_chart(id):
+
+  
+        quantity = app.db.execute(
+            "SELECT COALESCE(quantity, 0) "
+            "FROM Purchases "
+            "WHERE pid = :id "
+            "AND fulfill_by_seller = TRUE "
+            "ORDER BY time_purchased DESC",
+            id = id)
+
+        draw = len(quantity) > 0
+
+        return draw

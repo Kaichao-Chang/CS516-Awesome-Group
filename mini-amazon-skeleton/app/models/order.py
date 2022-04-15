@@ -56,8 +56,19 @@ class Order:
 
         return total_price
 
+    @staticmethod 
+    def get_order_id(pur_id):
+        order_id = app.db.execute(
+            "SELECT order_id "
+            "FROM Orders "
+            "WHERE pur_id = :pur_id ",
+            pur_id = pur_id
+        )
+
+        return order_id[0][0]
 class Detailed_Order: 
-    def __init__(self, p_name, quantity, unit_price, seller_lname, seller_fname, fulfill_by_seller, fulfill_time):
+    def __init__(self, pur_id, p_name, quantity, unit_price, seller_lname, seller_fname, fulfill_by_seller, fulfill_time):
+        self.pur_id = pur_id
         self.p_name = p_name
         self.quantity = quantity
         self.unit_price = unit_price
@@ -69,7 +80,7 @@ class Detailed_Order:
     @staticmethod 
     def get_all_by_oid (oid):
         detailed_order = app.db.execute(
-            "SELECT Products.name, Purchases.quantity, Purchases.unit_price, Users.lastname, Users.firstname, Purchases.fulfill_by_seller, Order_fulfill.time_fulfilled "
+            "SELECT Purchases.id, Products.name, Purchases.quantity, Purchases.unit_price, Users.lastname, Users.firstname, Purchases.fulfill_by_seller, Order_fulfill.time_fulfilled "
             "FROM Orders "
             "LEFT JOIN Purchases "
             "ON Orders.pur_id = Purchases.id "

@@ -91,3 +91,12 @@ CREATE TABLE Orders (
     completed_status BOOLEAN DEFAULT TRUE,
     placed_datetime timestamp DEFAULT Now()
 );
+
+CREATE TABLE Messages (
+    uid INT NOT NULL,
+    seller_id INT NOT NULL,
+    pur_id INT NOT NULL,
+    msg VARCHAR(255),
+    from_user BOOLEAN,
+    time_of_message TIMESTAMPTZ DEFAULT Now()
+);
