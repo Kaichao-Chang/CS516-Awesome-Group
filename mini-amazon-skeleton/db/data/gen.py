@@ -4,7 +4,7 @@ from itertools import product
 
 from faker import Faker
 from werkzeug.security import generate_password_hash
-from random import seed, choice
+from random import randrange, seed, choice
 
 Faker.seed(0)
 fake = Faker()
@@ -59,7 +59,7 @@ def gen_products(num_products, avaliable_uid):
             inv = fake.random_int(1, 20)
             cate = choice(["A","B","C"])
             desc = fake.sentence(nb_words=4)[:-1]
-            img = str(pid)+'.jpg'
+            img = str(randrange(10))+'.jpg'
 
             writer.writerow(
                 [pid, name, price, available, seller_id, overall_star, cate, desc, inv, img])
