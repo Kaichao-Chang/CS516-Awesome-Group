@@ -3,7 +3,6 @@ from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 from flask import current_app as app
 from .. import login
-from datetime import datetime
 
 
 class User(UserMixin):
@@ -27,8 +26,8 @@ class User(UserMixin):
         if self.is_seller:
             for a, _ in enumerate(content):
                 if _ is not None:
-                    rev_full = self.Review(content[a], star[a], upvote[a], customer_id[a])
-                    self.reviews.append(rev_full)
+                    rev = self.Review(content[a], star[a], upvote[a], customer_id[a])
+                    self.reviews.append(rev)
 
 
     # requirement 1: an existing user can log in using email and password.
@@ -183,7 +182,6 @@ class User(UserMixin):
         id=id)
         id = rows[0][0]
         return User.get(id)
-
 
     # requirement 3: find the corresponding account balance, if id is given
         # if the id exists in table Users, this function will return the corresponding balance of that user

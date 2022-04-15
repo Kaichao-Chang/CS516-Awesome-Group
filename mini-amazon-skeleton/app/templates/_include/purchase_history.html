@@ -1,57 +1,22 @@
 {% if current_user.is_authenticated %}
 
-
-<head>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"> </script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"> </script>
-  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css" rel="stylesheet" type="text/css" />
-</head>
-
-
-
 <h1>Your Purchase History:</h1>
 
 <br/>
 
 <h3>Search and filter your purchase history:</h3>
 <form action="{{ url_for('users.purchase_history') }}" method="POST">
-    <input type="text" name="seller" id="tags_seller" placeholder="by seller", value="{{search_seller}}">
+    <input type="text" name="seller" id="tags_seller" placeholder="Seller's Name", value="{{search_seller}}">
     from
     <input type="date" name="start_date" value={{since}}>
     to
     <input type="date" name="end_date" value={{to}}>
-    
-
-
-
-    <script>
-    $( function() {
-        var availableSellers = [
-            {% for s in potential_sellers %}
-                "{{s}}",
-            {% endfor %}
-        ];
-        $( "#tags_seller" ).autocomplete({
-            source: availableSellers
-        });
-        $( "#tags_item" ).autocomplete({
-            source: availableItems
-        });
-    });
-    </script>
-
-
-
-
+  
+    <!-- Still need to add some codes here, to display the purchase history/filter results...  -->
     
     <input type = "submit" value = "Search" />
     <a class="btn btn-secondary" href="{{ url_for('users.purchase_history') }}" role="button">Re-search</a>
 </form>
-
-
-
-
-
 
 
 <br/>
@@ -62,10 +27,10 @@
       <th scope="col">Order ID</th>
       <th scope="col">Total Quantity</th>
       <th scope="col">Total Amount</th>
-      <th scope="col">Seller Name</th>
       <th scope="col">Purchase Time</th>
       <th scope="col">Fulfillment Status</th>
-      <th scope="col">Detail</th>
+      <th scope="col">Sellers' Names</th>
+      <th scope="col">Order Details</th>
     </tr>
   </thead>
 
@@ -75,6 +40,8 @@
         <th scope="row">{{p.oid}}</th>
         <td>{{p.quantity}}</td>
         <td>{{p.price}}</td>
+        <td>{{p.time_purchased}}</td>
+        <td>{{p.completed_status}}</td>  
         <td>
             {% for seller in p.sname %}
                 <a href="{{ url_for('users.public_view_user', id=p.sid[loop.index0]) }}">{{p.sname[loop.index0]}}</a>
@@ -83,9 +50,7 @@
                 {% endif %}
             {% endfor %}    
         </td>
-        <td>{{p.time_purchased}}</td>
-        <td>{{p.completed_status}}</td>
-        <td><a href="{{ url_for('users.detailed_order_buyer', order_id=p.oid) }}">More details</a></td>
+        <td><a href="{{ url_for('users.detailed_order_buyer', order_id=p.oid) }}">Detailed Page for Each Order</a></td>
       </tr>
     {% endfor %}
   </tbody>
