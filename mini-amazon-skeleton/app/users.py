@@ -167,10 +167,10 @@ def balance():
 
 ##################### The followings are for purchase history ####################
 # I just use the following function to split the date variable into year, month, and day:
-def Date_Split(date1, date2):
-    date1_year, date1_month, date1_day = list(map(int, date1.split("-")))
-    date2_year, date2_month, date2_day = list(map(int, date2.split("-")))
-    return [date1_year, date1_month, date1_day], [ date2_year, date2_month, date2_day ]
+def Date_Split(early_time, later_time):
+    early_y, early_m, early_d = list(map(int, early_time.split("-")))
+    later_y, later_m, later_d = list(map(int, later_time.split("-")))
+    return [early_y, early_m, early_d], [later_y, later_m, later_d]
 
 # The following function is to filter of purchase history
 @bp.route('/purchase_history', methods=['GET', 'POST'])
@@ -179,62 +179,62 @@ def purchase_history():
         current_user.is_current_seller = True
  
     if request.method == "POST":
-        form_data = request.form
-        input_seller_fullname = form_data['seller']
-        input_seller = input_seller_fullname.split() 
-        input_start_date = form_data['start_date']
-        input_end_date = form_data['end_date']
-        
-        # The user will enter something here to do filterng:
-        date_start, date_end = Date_Split(input_start_date, input_end_date)
-        datetime_start, datetime_end = datetime.datetime(date_start[0], date_start[1], date_start[2], 0, 0, 0), datetime.datetime(date_end[0], date_end[1], date_end[2], 0, 0, 0)
-    
+        # The followings 5 lines are for input fields to do purchase history filter:
+        input_data = request.form
+        input_since_date = input_data['since_date']
+        input_to_date = input_data['to_date']
+        input_seller_fullname = input_data['seller']
+        input_seller_name = input_seller_fullname.split() 
+        # The following 2 lines are to generate the since_date_2 and to_date_2 which will be used in function get_all_by_uid_since:
+        since_date, to_date = Date_Split(input_since_date, input_to_date)
+        start_date_2, to_date_2 = datetime.datetime(since_date[0], since_date[1], since_date[2], 0, 0, 0), datetime.datetime(to_date[0], to_date[1], to_date[2], 0, 0, 0)
+        # The following 4 lines are to split the Seller's Name the user input into seller_firstname and seller_lastname, seperatively:
         seller_firstname = '%'
         seller_lastname = '%' 
+        seller_firstname = '%' + input_seller_name[0] + '%'
+        seller_lastname = '%' + input_seller_name[1] + '%'
         
-        if len(input_seller) >= 2:
-            seller_firstname = '%' + input_seller[0] + '%'
-            seller_lastname = '%' + input_seller[1] + '%'
-        elif len(input_seller) == 1:
-            seller_firstname = '%' + input_seller[0] + '%'
+        # The following line is to get the returned value of function get_all_by_uid_since:
+            # Note that the returned variable "purchases" will be used in many places later (plz be careful here).
+        purchases = Purchase.get_all_by_uid_since(current_user.id, start_date_2, to_date_2, seller_firstname, seller_lastname)
         
-        purchases = Purchase.get_all_by_uid_since(current_user.id, datetime_start, datetime_end, seller_firstname, seller_lastname)
-        
-        potential_sellers = []
+        # The following 5 lines are to generate a list which includes all sellers' names of each purchase in each order:
+        all_sellers_involves = []
         for p in purchases:
             for s in p.sname:
-                if s not in potential_sellers:
-                    potential_sellers.append(s)
+                if s not in all_sellers_involves:
+                    all_sellers_involves.append(s)
     
         return render_template('purchase_history.html', 
                                 title='History Of Purchase', 
                                 purchase=purchases, 
-                                potential_sellers=potential_sellers, 
-                                search_seller=input_seller_fullname,
-                                since=datetime_start.strftime("%Y-%m-%d"),
-                                to=datetime_end.strftime("%Y-%m-%d"))
+                                all_sellers_involves=all_sellers_involves, 
+                                seller_name_user_input=input_seller_fullname,
+                                user_input_since=start_date_2.strftime("%Y-%m-%d"),
+                                user_input_to=to_date_2.strftime("%Y-%m-%d"))
 
     elif request.method == "GET":
-        ancient = datetime.datetime(1980, 9, 14, 0, 0, 0)
-        now = datetime.datetime.now()
-        purchases = Purchase.get_all_by_uid_since(current_user.id, ancient, now)
-            
-        potential_sellers = []
+        early_limit = datetime.datetime(1980, 9, 14, 0, 0, 0)
+        later_limit = datetime.datetime(2050, 9, 14, 0, 0, 0)
+        purchases = Purchase.get_all_by_uid_since(current_user.id, early_limit, later_limit)
+          
+        all_sellers_involves = []
         for p in purchases:
             for s in p.sname:
-                if s not in potential_sellers:
-                    potential_sellers.append(s)
+                if s not in all_sellers_involves:
+                    all_sellers_involves.append(s)
         
-        since = ancient.strftime("%Y-%m-%d")
-        today = now.strftime("%Y-%m-%d")
+        early_limit_str = early_limit.strftime("%Y-%m-%d")
+        later_limit_str = later_limit.strftime("%Y-%m-%d")
 
         return render_template('purchase_history.html', 
                                 title='History Of Purchase', 
                                 purchase=purchases,
-                                potential_sellers=potential_sellers, 
-                                search_seller="",
-                                since=since,
-                                to=today)
+                                all_sellers_involves=all_sellers_involves, 
+                                seller_name_user_input="",
+                                user_input_since=early_limit_str,
+                                user_input_to=later_limit_str)
+
 
 ################# The following is for Public View of User #################
 @bp.route('/public_view_user/<int:id>')

@@ -16,19 +16,21 @@ class Purchase:
     @staticmethod
     def get_all_by_uid_since(uid, start_date, end_date, quantity=-1, seller_firstname='%', seller_lastname='%'):
 
-        inter_table = "WITH subquery AS (" \
-                    "SELECT order_id as oid, o.uid AS uid, p.seller_id AS sid, CONCAT(u.firstname, ' ', u.lastname) AS sname, SUM(p.unit_price*cast(p.quantity AS DECIMAL(7,2) )) AS total_price, SUM(p.quantity) AS total_quantity, o.completed_status, o.placed_datetime " \
-                    "FROM Purchases AS p, Users AS u,  Orders as o " \
-                    "WHERE o.uid = :uid " \
-                        "AND o.pur_id = p.id " \
-                        "AND u.id = p.seller_id " \
-                        "AND ( ( o.placed_datetime >= :start_date AND o.placed_datetime <= :end_date ) )" \
-                    "GROUP BY order_id, o.uid, p.seller_id, u.firstname, u.lastname, o.completed_status, o.placed_datetime ) "\
-                "SELECT oid, uid, completed_status, MIN(placed_datetime) AS time_purchased, ARRAY_AGG(sid) AS sid, ARRAY_AGG(sname) AS sname, SUM(total_price) AS price, SUM(total_quantity) AS quantity "\
-                "FROM subquery " \
-                "GROUP BY oid, uid, completed_status "\
-                "ORDER BY MIN(placed_datetime) DESC "
-        rows = app.db.execute(inter_table,
+        rows = app.db.execute(
+            '''
+            WITH subquery AS (
+                    SELECT order_id as oid, o.uid AS uid, p.seller_id AS sid, CONCAT(u.firstname, ', ', u.lastname) AS sname, SUM(p.unit_price*cast(p.quantity AS DECIMAL(7,2) )) AS total_price, SUM(p.quantity) AS total_quantity, o.completed_status, o.placed_datetime
+                    FROM Purchases AS p, Users AS u,  Orders as o 
+                    WHERE o.uid = :uid 
+                        AND o.pur_id = p.id 
+                        AND u.id = p.seller_id 
+                        AND ( ( o.placed_datetime >= :start_date AND o.placed_datetime <= :end_date ) )
+                    GROUP BY order_id, o.uid, p.seller_id, u.firstname, u.lastname, o.completed_status, o.placed_datetime )
+                SELECT oid, uid, completed_status, MIN(placed_datetime) AS time_purchased, ARRAY_AGG(sid) AS sid, ARRAY_AGG(sname) AS sname, SUM(total_price) AS price, SUM(total_quantity) AS quantity
+                FROM subquery 
+                GROUP BY oid, uid, completed_status
+                ORDER BY MIN(placed_datetime) DESC
+            ''',
                               uid=uid,
                               start_date=start_date,
                               end_date=end_date,
