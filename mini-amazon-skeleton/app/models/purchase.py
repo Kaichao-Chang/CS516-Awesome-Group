@@ -18,12 +18,11 @@ class Purchase:
             '''
             WITH subquery AS (
                     SELECT order_id as oid, o.uid AS uid, p.seller_id AS sid, CONCAT(u.firstname, ', ', u.lastname) AS sname, SUM(p.unit_price*cast(p.quantity AS DECIMAL(7,2) )) AS total_price, SUM(p.quantity) AS total_quantity, o.completed_status, o.placed_datetime
-                    FROM Purchases AS p, Users AS u,  Orders as o 
+                    FROM Orders as o, Purchases AS p, Users AS u, 
                     WHERE o.uid = :uid 
-                        AND o.pur_id = p.id 
-                        AND u.id = p.seller_id 
-                        AND ( ( o.placed_datetime >= :start_date AND o.placed_datetime <= :end_date ) )
-                    GROUP BY order_id, o.uid, p.seller_id, u.firstname, u.lastname, o.completed_status, o.placed_datetime )
+                    AND o.pur_id = p.id AND u.id = p.seller_id AND ( ( o.placed_datetime >= :start_date AND o.placed_datetime <= :end_date ) )
+                    GROUP BY order_id, o.uid, p.seller_id, u.firstname, u.lastname, o.completed_status, o.placed_datetime 
+                    )
                 SELECT oid, uid, completed_status, MIN(placed_datetime) AS time_purchased, ARRAY_AGG(sid) AS sid, ARRAY_AGG(sname) AS sname, SUM(total_price) AS price, SUM(total_quantity) AS quantity
                 FROM subquery 
                 GROUP BY oid, uid, completed_status
