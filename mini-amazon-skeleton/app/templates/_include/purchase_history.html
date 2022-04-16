@@ -1,6 +1,6 @@
 {% if current_user.is_authenticated %}
 
-<h1>Your Purchase History:</h1>
+<h2>Your Purchase History:</h2>
 
 <br/>
 
@@ -15,7 +15,6 @@
     <!-- Still need to add some codes here, to display the purchase history/filter results...  -->
     
     <input type = "submit" value = "Search" />
-    <a class="btn secondary" href="{{ url_for('users.purchase_history') }}" role="button">Re-search</a>
 </form>
 
 
@@ -37,7 +36,7 @@
   <tbody>
     {% for p in purchase%}
       <tr>
-        <th scope="row">{{p.oid}}</th>
+        <th scope="row">{{p.id}}</th>
         <td>{{p.quantity}}</td>
         <td>{{p.price}}</td>
         <td>{{p.time_purchased}}</td>
@@ -45,12 +44,12 @@
         <td>
             {% for seller in p.sname %}
                 <a href="{{ url_for('users.public_view_user', id=p.sid[loop.index0]) }}">{{p.sname[loop.index0]}}</a>
-                {% if loop.index0 < p.sname|length - 1 %}
-                ,
+                {% if loop.index0 <= p.sname|length %}
+                  ,
                 {% endif %}
             {% endfor %}    
         </td>
-        <td><a href="{{ url_for('users.detailed_order_buyer', order_id=p.oid) }}">Detailed Page for Each Order</a></td>
+        <td><a href="{{ url_for('users.detailed_order_buyer', order_id=p.id) }}">Detailed Page for Each Order</a></td>
       </tr>
     {% endfor %}
   </tbody>

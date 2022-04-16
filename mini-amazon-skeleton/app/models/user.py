@@ -1,4 +1,4 @@
-from flask_login import UserMixin, current_user
+from flask_login import UserMixin
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 from flask import current_app as app
@@ -23,12 +23,14 @@ class User(UserMixin):
         self.is_seller = False if is_seller is None else True
         self.reviews = []
 
-        if self.is_seller:
-            for a, _ in enumerate(content):
-                if _ is not None:
-                    rev = self.Review(content[a], star[a], upvote[a], customer_id[a])
-                    self.reviews.append(rev)
-
+        if (self.is_seller is True):
+            def for_each(x):
+                for i in range(len(x)):
+                    yield i, x[i]
+            for a, b in for_each(customer_id):
+                if (b is not None):
+                        rev = self.Review(content[a], star[a], upvote[a], customer_id[a])
+                        self.reviews.append(rev)
 
     # requirement 1: an existing user can log in using email and password.
         # if the password and email are correct, this function will return the users' information

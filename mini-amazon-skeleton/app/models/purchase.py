@@ -1,8 +1,8 @@
 from flask import current_app as app
 
 class Purchase:
-    def __init__(self, oid, uid, completed_status, time_purchased, sid, sname, price, quantity):
-        self.oid = oid
+    def __init__(self, id, uid, completed_status, time_purchased, sid, sname, price, quantity):
+        self.id = id
         self.uid = uid
         self.completed_status = "Have Completed :)" if completed_status else "Not Completed :("
         self.time_purchased = time_purchased
@@ -16,7 +16,7 @@ class Purchase:
         rows = app.db.execute(
             '''
             WITH subquery AS (
-                    SELECT order_id as oid, o.uid AS uid, p.seller_id AS sid, o.completed_status, o.placed_datetime, CONCAT(u.firstname, ', ', u.lastname) AS sname, SUM(p.unit_price*cast(p.quantity AS DECIMAL(7,2) )) AS total_price, SUM(p.quantity) AS total_quantity
+                    SELECT order_id as id, o.uid AS uid, p.seller_id AS sid, o.completed_status, o.placed_datetime, CONCAT(u.firstname, '_', u.lastname) AS sname, SUM(p.unit_price*cast(p.quantity AS DECIMAL(7,2) )) AS total_price, SUM(p.quantity) AS total_quantity
                     FROM Orders as o
                     left join Purchases AS p
                     on o.pur_id = p.id
@@ -26,9 +26,9 @@ class Purchase:
                         AND ( ( o.placed_datetime > :start_date AND o.placed_datetime < :end_date ) )
                     GROUP BY order_id, o.uid, p.seller_id, u.firstname, u.lastname, o.completed_status, o.placed_datetime 
                     )
-                SELECT oid, uid, completed_status, MIN(placed_datetime) AS time_purchased, ARRAY_AGG(sid) AS sid, ARRAY_AGG(sname) AS sname, SUM(total_price) AS price, SUM(total_quantity) AS quantity
+                SELECT id, uid, completed_status, MIN(placed_datetime) AS time_purchased, ARRAY_AGG(sid) AS sid, ARRAY_AGG(sname) AS sname, SUM(total_price) AS price, SUM(total_quantity) AS quantity
                 FROM subquery 
-                GROUP BY oid, uid, completed_status
+                GROUP BY id, uid, completed_status
                 ORDER BY MIN(placed_datetime) DESC
             ''',
             uid=uid,
