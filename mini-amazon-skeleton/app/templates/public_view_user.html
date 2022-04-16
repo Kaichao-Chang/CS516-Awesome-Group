@@ -3,28 +3,29 @@
 
 <h1>Pulic Profile of The User</h1>
 <h2>The followings are this user's basic information:</h2>
-<p><b>ID: </b>{{user.id}} <br> <b>Your name:</b> {{user.firstname}}&nbsp;{{user.lastname}}</p>
+<b>ID:  </b><u>{{user.id}}</u><br/>
+<b>Your name:</b> {{user.firstname}}&nbsp;{{user.lastname}}<br/>
+<b>Email:  </b><u>{{user.email}}</u><br/>
+<b>Address:  </b><u>{{user.address}}</u><br/>
 
 
 {% if user.is_seller %}
-<b>Email:  </b><u>{{user.email}}</u><br/>
-<b>Address:  </b><u>{{user.address}}</u><br/>
     
 <h2>If this user is a seller, show seller reviews this user received:</h2>
     
     <ol>
         {% for review in user.reviews %}
-        <li>{% for star in range(5) %}
-                {% if star+1 <= review.star %}
-                    &#9733;
+        <li>{% for star in [0,1,2,3,4] %}
+                {% if star < review.star %}
+                    &#11089;
                 {% endif %}
-                {% if star+1 > review.star %}
-                    &#9734;
+                {% if star > (review.star-1) %}
+                    &#11090;
                 {% endif %}
             {% endfor %}
             </br>
             <b><u>{{review.content}}</u></b> </br>
-            <a href="{{ url_for('users.public_view_user', id=review.customer_id) }}">See which user rates this product:</a>
+            <a href="{{ url_for('users.public_view_user', id=review.customer_id) }}">See which user leave this seller review:</a>
             
             <br/></br>
         {% endfor %}
