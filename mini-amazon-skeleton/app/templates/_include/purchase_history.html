@@ -6,12 +6,10 @@
 
 <h3>Search and filter your purchase history:</h3>
 <form action="{{ url_for('users.purchase_history') }}" method="POST">
-
     from
     <input type="date" name="since_date" value={{user_input_since}}>
     to
     <input type="date" name="to_date" value={{user_input_to}}>
-
     <input type="text" name="seller" id="tags_seller" placeholder="Seller's Name", value="{{search_seller}}">
   
     <!-- Still need to add some codes here, to display the purchase history/filter results...  -->

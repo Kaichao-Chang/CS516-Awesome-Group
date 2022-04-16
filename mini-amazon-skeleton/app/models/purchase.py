@@ -12,10 +12,8 @@ class Purchase:
         self.completed_status = "Have Completed :)" if completed_status else "Not Completed :(" 
         self.time_purchased = time_purchased 
 
-
     @staticmethod
     def get_all_by_uid_since(uid, start_date, end_date, quantity=-1, seller_firstname='%', seller_lastname='%'):
-
         rows = app.db.execute(
             '''
             WITH subquery AS (
@@ -31,10 +29,9 @@ class Purchase:
                 GROUP BY oid, uid, completed_status
                 ORDER BY MIN(placed_datetime) DESC
             ''',
-                              uid=uid,
-                              start_date=start_date,
-                              end_date=end_date,
-                              firstname=seller_firstname,
-                              lastname=seller_lastname)
+            uid=uid,
+            start_date=start_date,
+            end_date=end_date,
+            firstname=seller_firstname,
+            lastname=seller_lastname)
         return rows
-        #return [Purchase(*row) for row in rows]

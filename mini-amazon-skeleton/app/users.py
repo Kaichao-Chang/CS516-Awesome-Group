@@ -166,6 +166,7 @@ def balance():
 
 
 ##################### The followings are for purchase history ####################
+
 # I just use the following function to split the date variable into year, month, and day:
 def Date_Split(early_time, later_time):
     early_y, early_m, early_d = list(map(int, early_time.split("-")))
