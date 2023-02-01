@@ -14,6 +14,9 @@ Project option: Mini-Amazon (standard option)
 Link to our gitlab/github repository:
 https://github.com/Kaichao-Chang/CS516-Awesome-Group
 
+Link to our group presentation:
+https://www.youtube.com/watch?v=tXKEoZnoYfo
+
 Who is working on which component:  
 Xiaoxi Lyu - Users Guru (responsible for Account / Purchases)  
 Chihui Shao - Products Guru (responsible for Products / Cart)  
