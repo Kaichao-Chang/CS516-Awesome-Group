@@ -1,7 +1,7 @@
 # Introduce our group
 
 Group Member:
-Xiaoxi Lyu,
+Xiaoxi Celia Lyu,
 Chihui Shao,
 Quan Wang,
 Kaichao Chang
